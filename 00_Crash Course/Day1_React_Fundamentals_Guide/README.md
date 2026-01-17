@@ -127,6 +127,35 @@ const element = (
 );
 ```
 
+**Parentheses `()`** are used to wrap multi-line JSX elements. They're optional but help with readability and prevent JavaScript's automatic semicolon insertion from breaking your code.
+```javascript
+const element = (
+  <div>
+    <h1>Hello, World!</h1>
+  </div>
+);
+```
+
+**Curly braces `{}`** are used to embed JavaScript expressions inside JSX. Whenever you want to use a variable, calculation, or any JavaScript code within your JSX, wrap it in curly braces.
+```javascript
+const element = (
+  <div>
+    <h1>Hello, {name}!</h1>
+    <p>You are {age} years old</p>
+    <p>Next year you'll be {age + 1}</p>
+  </div>
+);
+```
+
+> **Note:** Inside `{}`, you can only use expressions (things that return a value), not statements. Use ternary operators instead of `if` statements, and `.map()` instead of `for` loops.
+
+| Syntax | Usage | Example |
+|--------|-------|---------|
+| `()` | Wrap JSX elements | `const el = (<div>...</div>)` |
+| `{}` | Embed JavaScript expressions | `<h1>Hello {name}</h1>` |
+
+> **Tip:** Think of `{}` as an escape hatch from JSX back into JavaScript. Everything inside curly braces is evaluated as JavaScript code.
+
 #### What Can Go Inside `{}` ? [web:8]
 
 ```javascript
@@ -487,23 +516,30 @@ Note: Props flow ONE WAY (parent → child) 🔽
 #### Step 1: Define a Component That Accepts Props
 
 ```javascript
-// Method 1: Using props object
-function Greeting(props) {
-  return <h1>Hello, {props.name}!</h1>;
-}
+import React from "react";
 
-// Method 2: Destructuring (cleaner, recommended!)
+// Greeting component (destructuring props)
 function Greeting({ name }) {
   return <h1>Hello, {name}!</h1>;
 }
 
-// Method 3: Multiple props with destructuring
+// UserCard component (multiple props)
 function UserCard({ name, age, location }) {
   return (
     <div>
       <h2>{name}</h2>
       <p>Age: {age}</p>
       <p>Location: {location}</p>
+    </div>
+  );
+}
+
+// Main component (exported as default)
+export default function App() {
+  return (
+    <div>
+      <Greeting name="John" />
+      <UserCard name="Alice" age={25} location="New York" />
     </div>
   );
 }
@@ -657,6 +693,77 @@ function Card({ children }) {
   <button>Click me</button>
 </Card>
 ```
+
+## Props vs Children in React
+
+**Regular props** are passed as attributes in the opening tag, while **children** is a special prop that represents content placed between opening and closing tags.
+
+### Regular Props Example
+```javascript
+function Card({ title, description }) {
+  return (
+    <div className="card">
+      <h2>{title}</h2>
+      <p>{description}</p>
+    </div>
+  );
+}
+
+// Usage - props passed as attributes
+<Card title="Card Title" description="This is the card content!" />
+```
+
+### Children Prop Example
+```javascript
+function Card({ children }) {
+  return (
+    <div className="card">
+      {children}
+    </div>
+  );
+}
+
+// Usage - content between tags becomes 'children'
+<Card>
+  <h2>Card Title</h2>
+  <p>This is the card content!</p>
+  <button>Click me</button>
+</Card>
+```
+
+> **Note:** `children` is automatically passed by React when you put content between component tags. You don't explicitly write `children={...}`.
+
+### Comparison
+
+| Feature | Regular Props | Children Prop |
+|---------|---------------|---------------|
+| **Syntax** | `<Card title="Hello" />` | `<Card>Hello</Card>` |
+| **Passing data** | Attributes in opening tag | Content between tags |
+| **Flexibility** | Fixed structure | Can pass any JSX/components |
+| **Use case** | Simple data (strings, numbers) | Complex nested content |
+
+### Combined Usage
+You can use both regular props and children together:
+```javascript
+function Card({ title, children }) {
+  return (
+    <div className="card">
+      <h2>{title}</h2>
+      <div className="content">
+        {children}
+      </div>
+    </div>
+  );
+}
+
+// Usage
+<Card title="My Card">
+  <p>This is flexible content!</p>
+  <button>Action</button>
+</Card>
+```
+
+> **Tip:** Use `children` when you want to create wrapper components (like layouts, containers, modals) where the content inside can vary. Use regular props for specific, predictable data.
 
 ### Component Composition: Building with Blocks 🏗️
 
@@ -1105,40 +1212,6 @@ function MyComponent() {
 <UserCard age={25} isActive={true} />
 ```
 
-### ✅ Best Practices Checklist
-
-#### Component Organization [web:9][web:17]
-
-- ✅ One component per file
-- ✅ Use PascalCase for component names
-- ✅ Keep components small (under 200 lines)
-- ✅ Extract reusable logic into separate components
-- ✅ Group related components in folders
-
-#### Props Management [web:10]
-
-- ✅ Destructure props for clarity
-- ✅ Use default values when appropriate
-- ✅ Keep prop names descriptive
-- ✅ Validate props with PropTypes/TypeScript
-- ✅ Avoid prop drilling (passing props through many layers)
-
-#### Code Cleanliness [web:17][web:20]
-
-- ✅ Remove console.log() statements
-- ✅ Remove commented-out code
-- ✅ Use meaningful variable names
-- ✅ Keep code DRY (Don't Repeat Yourself) [web:20]
-- ✅ Add comments only where necessary
-
-#### JSX Writing
-
-- ✅ Use fragments to avoid extra divs [web:20]
-- ✅ Format code with proper indentation
-- ✅ Use consistent quote style (single or double)
-- ✅ Keep JSX expressions simple
-- ✅ Extract complex logic outside JSX
-
 ### 🎯 Do's and Don'ts Quick Reference
 
 | ✅ DO | ❌ DON'T |
@@ -1197,14 +1270,6 @@ After mastering Day 1, you'll be ready for:
 - **Day 3:** Hooks (useState, useEffect)
 - **Day 4:** Forms & Controlled Components
 - And much more!
-
----
-
-## 🎉 Congratulations!
-
-You've completed Day 1 of your React journey! 🎊
-
-Remember: **Every React expert was once a beginner.** Keep practicing, stay curious, and don't be afraid to make mistakes - they're your best teachers!
 
 ---
 
