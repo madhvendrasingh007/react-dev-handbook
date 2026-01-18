@@ -46,24 +46,24 @@ Build a **Product Card Gallery** similar to what you'd see on Amazon, Flipkart, 
 ### What We're Building:
 
 ```
-┌─────────────────────────────────────────────────────────────┐
-│           🛍️ Product Gallery                                │
-├─────────────────────────────────────────────────────────────┤
-│                                                             │
-│  ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌──────────┐  │
-│  │  📱      │  │  💻      │  │  🎧      │  │  ⌚       │  │
-│  │  iPhone  │  │  MacBook │  │  AirPods │  │  Watch   │  │
-│  │  $999    │  │  $1299   │  │  $249    │  │  $399    │  │
-│  │  ⭐⭐⭐⭐⭐ │  │  ⭐⭐⭐⭐⭐ │  │  ⭐⭐⭐⭐   │  │  ⭐⭐⭐⭐⭐ │  │
-│  │ 🟢 Stock │  │ 🔴 Out   │  │ 🟠 Sale  │  │ 🟢 Stock │  │
-│  └──────────┘  └──────────┘  └──────────┘  └──────────┘  │
-│                                                             │
-│  ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌──────────┐  │
-│  │  📷      │  │  🎮      │  │  📱      │  │  💻      │  │
-│  │  Camera  │  │  Console │  │  iPad    │  │  Laptop  │  │
-│  │  $899    │  │  $499    │  │  $599    │  │  $1099   │  │
-│  └──────────┘  └──────────┘  └──────────┘  └──────────┘  │
-└─────────────────────────────────────────────────────────────┘
+┌────────────────────────────────────────────────────────────────────────────────┐
+│           🛍️ Product Gallery                                                   │
+├────────────────────────────────────────────────────────────────────────────────┤
+│                                                                                │
+│  ┌───────────────┐  ┌─────────────────┐  ┌─────────────┐  ┌───────────────┐    │
+│  │  📱           │  │  💻            │  │  🎧         │  │  ⌚          │    │ 
+│  │  iPhone       │  │  MacBook        │  │  AirPods    │  │  Watch        │    │
+│  │  $999         │  │  $1299          │  │  $249       │  │  $399         │    │
+│  │  ⭐⭐⭐⭐⭐ │  │  ⭐⭐⭐⭐⭐  │  │  ⭐⭐⭐⭐ │  │  ⭐⭐⭐⭐⭐ │    │
+│  │ 🟢 Stock      │  │ 🔴 Out         │  │ 🟠 Sale     │  │ 🟢 Stock     │    │
+│  └───────────────┘  └─────────────────┘  └─────────────┘  └───────────────┘    │
+│                                                                                │
+│  ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌──────────┐                        │
+│  │  📷      │  │  🎮     │  │  📱      │  │  💻     │                        │
+│  │  Camera  │  │  Console │  │  iPad    │  │  Laptop  │                        │
+│  │  $899    │  │  $499    │  │  $599    │  │  $1099   │                        │
+│  └──────────┘  └──────────┘  └──────────┘  └──────────┘                        │
+└────────────────────────────────────────────────────────────────────────────────┘
 ```
 
 ### 🎨 Features:
@@ -1537,191 +1537,6 @@ const discount = onSale
 
 ---
 
-### ✅ 7. Responsive Design
-
-Always test on multiple screen sizes:
-- Desktop (1920px)
-- Laptop (1366px)
-- Tablet (768px)
-- Mobile (375px)
-
----
-
-## 🎯 Challenges & Extensions
-
-Ready to level up? Try these! 💪
-
-### Challenge 1: Add Filter by Category ⭐⭐
-
-Add buttons to filter products by category:
-
-```javascript
-['All', 'Smartphones', 'Laptops', 'Audio', ...]
-```
-
-**Hint:** Use `filter()` method before `map()`
-
-```javascript
-products
-  .filter(product => category === 'All' || product.category === category)
-  .map(product => <ProductCard />)
-```
-
----
-
-### Challenge 2: Add Search Functionality ⭐⭐⭐
-
-Add a search bar to filter products by name:
-
-**Steps:**
-1. Add input field
-2. Store search term in state (learn useState!)
-3. Filter products based on search
-
----
-
-### Challenge 3: Sort Products ⭐⭐
-
-Add sorting options:
-- Price: Low to High
-- Price: High to Low
-- Rating: High to Low
-
-**Hint:** Use `sort()` method
-
-```javascript
-products.sort((a, b) => a.price - b.price)
-```
-
----
-
-### Challenge 4: Add to Cart Counter ⭐⭐⭐
-
-Track how many items are in cart:
-1. Add cart state
-2. Update count on button click
-3. Display count in header
-
-**Requires:** useState (Day 2 concept)
-
----
-
-### Challenge 5: Product Details Modal ⭐⭐⭐
-
-Click a product to see full details in a popup:
-1. Create Modal component
-2. Handle click events
-3. Show/hide modal
-
----
-
-### Challenge 6: Add More Product Fields ⭐
-
-Enhance product data:
-- Brand
-- Color options
-- Shipping info
-- Customer reviews count
-
----
-
-### Challenge 7: Implement Pagination ⭐⭐⭐⭐
-
-Show 6 products per page with navigation:
-- "Previous" and "Next" buttons
-- Page numbers
-- Calculate which products to show
-
----
-
-### Challenge 8: Dark Mode Toggle ⭐⭐⭐
-
-Add a button to switch themes:
-- Light background
-- Dark background
-- Update all colors accordingly
-
----
-
-## 🐛 Troubleshooting
-
-### Issue 1: Products Not Showing
-
-**Symptoms:** Blank screen or empty grid
-
-**Solutions:**
-1. Check import path: `import products from './data/products'`
-2. Check export: `export default products;`
-3. Check array is not empty: `console.log(products)`
-4. Check browser console for errors
-
----
-
-### Issue 2: Images Not Loading
-
-**Symptoms:** Broken image icons
-
-**Solutions:**
-1. Check image URLs are valid
-2. Try opening URL in browser
-3. Check internet connection
-4. Use placeholder service: `https://via.placeholder.com/400`
-
----
-
-### Issue 3: Grid Not Responsive
-
-**Symptoms:** Cards don't rearrange on small screens
-
-**Solutions:**
-1. Check `products-grid` class is applied
-2. Check media queries in CSS
-3. Test with browser DevTools responsive mode
-4. Clear browser cache
-
----
-
-### Issue 4: "key" Warning in Console
-
-**Error:** "Each child should have a unique key prop"
-
-**Solution:**
-```javascript
-// ❌ Missing key
-{products.map(product => <ProductCard product={product} />)}
-
-// ✅ With key
-{products.map(product => (
-  <ProductCard key={product.id} product={product} />
-))}
-```
-
----
-
-### Issue 5: Sale Badge Not Showing
-
-**Symptoms:** No badge on sale items
-
-**Solutions:**
-1. Check `onSale: true` in data
-2. Check conditional rendering: `{onSale && ...}`
-3. Verify CSS is imported
-4. Check CSS selector: `.sale-badge`
-
----
-
-### Issue 6: Hover Effects Not Working
-
-**Symptoms:** No animation on hover
-
-**Solutions:**
-1. Check CSS transitions are defined
-2. Verify `:hover` pseudo-class syntax
-3. Check browser supports transforms
-4. Test without browser extensions
-
----
-
 ## 📖 Resources
 
 ### Official Documentation
@@ -1787,25 +1602,6 @@ You've built a full product gallery! 🎊
 
 ---
 
-## 🚀 Next Steps
-
-### 1. Experiment
-- Add more products
-- Change colors and styles
-- Add new features
-
-### 2. Build Variations
-- Music album gallery
-- Restaurant menu
-- Team member showcase
-- Portfolio projects
-
-### 3. Continue Learning
-- **Day 2:** State Management & Events
-- **Day 3:** Hooks (useState, useEffect)
-- **Day 4:** Forms & User Input
-
----
 
 ## 📝 Quick Reference
 
@@ -1846,22 +1642,6 @@ const { name, price } = product;
   gap: 20px;
 }
 ```
-
----
-
-## 🤝 Contributing
-
-Improvements welcome! Feel free to:
-- Report bugs
-- Suggest features
-- Submit pull requests
-- Share your version
-
----
-
-## 📄 License
-
-This project is open source and available under the [MIT License](LICENSE).
 
 ---
 
