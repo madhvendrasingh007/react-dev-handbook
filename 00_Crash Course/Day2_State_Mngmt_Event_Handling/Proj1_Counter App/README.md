@@ -1,4 +1,4 @@
-# 🔢 Counter App - React Fundamentals Project
+# 🔢 Couter App - React Fundamentals Project
 
 ![React](https://img.shields.io/badge/React-18.x-61DAFB?style=for-the-badge&logo=react&logoColor=white)
 ![Vite](https://img.shields.io/badge/Vite-5.x-646CFF?style=for-the-badge&logo=vite&logoColor=white)
@@ -13,7 +13,7 @@
 ```
 ┌─────────────────────────────────────┐
 │                                     │
-│          🎯 Counter App             
+│          🎯 Counter App             │ 
 │                                     │
 │         ┌──────────────┐            │
 │         │      42      │            │
@@ -38,9 +38,8 @@
 5. [Code Walkthrough](#-code-walkthrough)
 6. [React Concepts Explained](#-react-concepts-explained)
 7. [Features](#-features)
-8. [Customization Challenges](#-customization-challenges)
-9. [Troubleshooting](#-troubleshooting)
-10. [Next Steps](#-next-steps)
+8. [Troubleshooting](#-troubleshooting)
+
 
 ---
 
