@@ -1,0 +1,176 @@
+/* App.css - Application Styles */
+
+/* Reset default styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Main app container - centers everything */
+.App {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Counter card container */
+.counter-container {
+  background: white;
+  padding: 40px;
+  border-radius: 20px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  text-align: center;
+  min-width: 350px;
+  animation: slideIn 0.5s ease-out;
+}
+
+/* Slide-in animation */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Title styling */
+.counter-container h1 {
+  color: #333;
+  margin-bottom: 30px;
+  font-size: 2rem;
+}
+
+/* Count display box */
+.count-display {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 30px;
+  border-radius: 15px;
+  margin: 20px 0;
+  box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+}
+
+.count-display h2 {
+  font-size: 4rem;
+  font-weight: bold;
+  margin: 0;
+}
+
+/* Button container */
+.button-group {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin: 20px 0;
+  flex-wrap: wrap;
+}
+
+/* Base button styles */
+.btn {
+  padding: 12px 24px;
+  font-size: 1rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  color: white;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* Button hover effect - lifts up! */
+.btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+}
+
+/* Button active state */
+.btn:active {
+  transform: translateY(0);
+}
+
+/* Button color variants */
+.btn-green {
+  background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+}
+
+.btn-red {
+  background: linear-gradient(135deg, #eb3349 0%, #f45c43 100%);
+}
+
+.btn-gray {
+  background: linear-gradient(135deg, #485563 0%, #29323c 100%);
+}
+
+/* Status display */
+.status {
+  margin-top: 25px;
+  padding: 15px;
+  background: #f0f0f0;
+  border-radius: 10px;
+}
+
+.status p {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #333;
+  margin: 0;
+}
+
+/* Alert messages */
+.alert {
+  margin-top: 20px;
+  padding: 15px;
+  border-radius: 10px;
+  background: #d4edda;
+  border: 2px solid #c3e6cb;
+  animation: fadeIn 0.5s ease;
+}
+
+.alert-danger {
+  background: #f8d7da;
+  border-color: #f5c6cb;
+}
+
+.alert p {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+/* Fade-in animation for alerts */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Responsive design for mobile */
+@media (max-width: 480px) {
+  .counter-container {
+    padding: 30px 20px;
+    min-width: 300px;
+  }
+
+  .count-display h2 {
+    font-size: 3rem;
+  }
+
+  .button-group {
+    flex-direction: column;
+  }
+
+  .btn {
+    width: 100%;
+  }
+}
