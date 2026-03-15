@@ -1,1310 +1,951 @@
+<div align="center">
 
 # 🚀 Day 1: React Fundamentals & JSX
-### Your Journey to Mastering React Begins Here! 🎯
+
+<img src="https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB" />
+<img src="https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black" />
+<img src="https://img.shields.io/badge/JSX-61DAFB?style=for-the-badge&logo=react&logoColor=white" />
+<img src="https://img.shields.io/badge/Day-01-FF6B6B?style=for-the-badge" />
+
+</div>
 
 ---
 
 ## 📚 Table of Contents
-1. [What is JSX?](#-what-is-jsx)
-2. [JSX Syntax & Expressions](#-jsx-syntax--expressions)
-3. [Functional Components](#-functional-components)
-4. [Props & Component Composition](#-props--component-composition)
-5. [Basic Styling in React](#-basic-styling-in-react)
-6. [Best Practices & Common Mistakes](#-best-practices--common-mistakes)
+
+| # | Topic |
+|---|-------|
+| 1 | [✅ Topics Covered](#-topics-covered) |
+| 2 | [💡 Real-Life Analogy](#-real-life-analogy) |
+| 3 | [🎨 What is JSX?](#-what-is-jsx) |
+| 4 | [✨ JSX Syntax & Expressions](#-jsx-syntax--expressions) |
+| 5 | [🧩 Functional Components](#-functional-components) |
+| 6 | [🎁 Props & Component Composition](#-props--component-composition) |
+| 7 | [🎨 Basic Styling in React](#-basic-styling-in-react) |
+| 8 | [⚠️ Best Practices & Common Mistakes](#%EF%B8%8F-best-practices--common-mistakes) |
+| 9 | [📝 Summary](#-summary) |
+
+---
+
+## ✅ Topics Covered
+
+✅ JSX syntax and expressions
+✅ Components (Functional Components)
+✅ Props and component composition
+✅ Basic styling in React
+
+---
+
+## 💡 Real-Life Analogy
+
+### 🧩 LEGO Blocks Concept
+
+> Think of React components like **LEGO blocks**.
+> Each block (component) is a **reusable piece** that you can combine with other blocks to build something larger.
+> **Props** are like the instructions that tell each block how to look and behave.
+
+```
+🧱 Individual Blocks         🏠 Combined Together
+─────────────────────        ───────────────────────────────────
+  [Header Block]              ┌──────────────────────────────┐
+  [Sidebar Block]    ──▶      │  Header                      │
+  [Card Block]                │  ┌──────────┐ ┌──────────┐   │
+  [Footer Block]              │  │  Card    │ │  Card    │   │
+                              │  └──────────┘ └──────────┘   │
+                              │  Footer                      │
+                              └──────────────────────────────┘
+
+Props = Instructions on the LEGO box
+        → color, size, text, behavior
+```
 
 ---
 
 ## 🎨 What is JSX?
 
-### Theory: Understanding JSX
+### 📖 Theory
 
-**JSX** stands for **JavaScript XML**. It's a syntax extension for JavaScript that lets you write HTML-like code directly inside your JavaScript files [web:3][web:5]. Think of it as a bridge between HTML and JavaScript that makes building user interfaces feel natural and intuitive.
+**JSX** stands for **JavaScript XML**. It is a syntax extension for JavaScript developed by the React team that allows you to write **HTML-like code inside JavaScript files**.
 
-### 🏗️ Real-World Analogy
-
-Imagine you're writing a letter (HTML) but you want to include some calculations or dynamic information (JavaScript) within it. Normally, you'd have to write the letter in one place and do calculations separately. JSX is like having a magic pen that lets you write both the letter AND do calculations right where you need them!
-
-### How JSX Works: Behind the Scenes
+JSX is not valid JavaScript by itself — a tool called **Babel** compiles it into plain JavaScript that browsers can understand. Under the hood, every JSX element becomes a `React.createElement()` call which produces a plain JavaScript object describing the UI.
 
 ```
-📝 You Write JSX          →    🔄 Babel Transforms    →    🌐 Browser Understands
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-const element =                  const element =              JavaScript creates
-<h1>Hello!</h1>                  React.createElement(         DOM elements
-                                 'h1', {}, 'Hello!')          
+┌──────────────────┐       ┌──────────────────────────┐       ┌─────────────────────┐
+│   You Write JSX  │  ──▶  │  Babel Compiles It       │  ──▶ │ Browser Runs JS     │
+│                  │       │                          │       │                     │
+│  <h1>Hello!</h1> │       │  React.createElement(    │       │  DOM Element        │
+│                  │       │    'h1', null, 'Hello!'  │       │  appears on screen  │
+│                  │       │  )                       │       │                     │
+└──────────────────┘       └──────────────────────────┘       └─────────────────────┘
 ```
 
-**What's happening?** [web:2][web:3]
-- JSX is NOT valid JavaScript that browsers can understand
-- A tool called **Babel** transforms JSX into regular JavaScript
-- The transformation converts JSX into `React.createElement()` calls
-- React then creates actual DOM elements that appear on your screen
+> 🔑 **Key Insight:** JSX is just syntactic sugar. `<h1>Hello</h1>` and `React.createElement('h1', null, 'Hello')` are identical — JSX just makes it human-readable.
+
+### 🔬 JSX vs Plain JavaScript
+
+```jsx
+// ✍️ What you write (JSX) — clean and readable
+const element = (
+  <div className="profile">
+    <h1>Madhvendra Singh</h1>
+    <p>Full-Stack Developer 🚀</p>
+  </div>
+);
+
+// ⚙️ What Babel produces — verbose and hard to read
+const element = React.createElement(
+  "div",
+  { className: "profile" },
+  React.createElement("h1", null, "Madhvendra Singh"),
+  React.createElement("p",  null, "Full-Stack Developer 🚀")
+);
+```
+
+Both produce the **same output**. JSX just makes the developer experience 10x better.
 
 ---
 
 ## ✨ JSX Syntax & Expressions
 
-### 1. Basic JSX Syntax
+### 📖 Theory
 
-#### Rule #1: Single Parent Element [web:5]
+JSX follows strict rules because it is compiled to JavaScript. These rules exist to ensure the output is valid JS. Understanding **why** each rule exists makes them easy to remember.
 
-```javascript
-// ❌ WRONG - Multiple parent elements
-const element = (
-  <h1>Hello World</h1>
-  <p>This won't work</p>
-);
+---
 
-// ✅ CORRECT - Single parent wrapper
-const element = (
-  <div>
-    <h1>Hello World</h1>
-    <p>This works perfectly!</p>
-  </div>
-);
+### 📏 Rule 1 — One Root Element
 
-// ✅ ALSO CORRECT - Using React Fragment (cleaner!)
-const element = (
-  <>
-    <h1>Hello World</h1>
-    <p>No extra div in the DOM!</p>
-  </>
-);
-```
+Every JSX expression must return **exactly one parent element**. This is because JSX compiles to a `return` statement in JavaScript — and a function can only return one value.
 
-**💡 Why?** JSX expressions must return a single element. Think of it like a gift box - you can have many items inside, but they all need to be in ONE box [web:5].
-
-**🎯 Pro Tip:** Use React Fragments `<>...</>` when you don't want to add extra divs to your DOM [web:20].
-
-#### Rule #2: All Tags Must Be Closed [web:5]
-
-```javascript
-// ❌ WRONG
-const element = <img src="photo.jpg">
-const element = <input type="text">
-
-// ✅ CORRECT - Self-closing tags
-const element = <img src="photo.jpg" />
-const element = <input type="text" />
-```
-
-#### Rule #3: camelCase for Attributes [web:2][web:3]
-
-```javascript
-// ❌ WRONG - HTML style
-<div class="container" onclick="handleClick()">
-  <label for="email">Email</label>
-</div>
-
-// ✅ CORRECT - JSX style
-<div className="container" onClick={handleClick}>
-  <label htmlFor="email">Email</label>
-</div>
-```
-
-**🔑 Key Differences:**
-- `class` → `className` (class is a reserved keyword in JavaScript)
-- `for` → `htmlFor` (for is a reserved keyword)
-- `onclick` → `onClick`
-- `onchange` → `onChange`
-- All multi-word attributes use camelCase! [web:2]
-
-### 2. JSX Expressions: The Superpower! 🦸
-
-Expressions in JSX are written inside curly braces `{}` [web:3][web:8]. Think of curly braces as "JavaScript mode switchers" - they tell React "Hey, evaluate this as JavaScript!"
-
-```javascript
-// Basic expressions
-const name = "Sarah";
-const age = 25;
-
-const element = (
-  <div>
-    <h1>Hello, {name}!</h1>
-    <p>You are {age} years old</p>
-    <p>Next year you'll be {age + 1}</p>
-  </div>
-);
-```
-
-**Parentheses `()`** are used to wrap multi-line JSX elements. They're optional but help with readability and prevent JavaScript's automatic semicolon insertion from breaking your code.
-```javascript
-const element = (
-  <div>
-    <h1>Hello, World!</h1>
-  </div>
-);
-```
-
-**Curly braces `{}`** are used to embed JavaScript expressions inside JSX. Whenever you want to use a variable, calculation, or any JavaScript code within your JSX, wrap it in curly braces.
-```javascript
-const element = (
-  <div>
-    <h1>Hello, {name}!</h1>
-    <p>You are {age} years old</p>
-    <p>Next year you'll be {age + 1}</p>
-  </div>
-);
-```
-
-> **Note:** Inside `{}`, you can only use expressions (things that return a value), not statements. Use ternary operators instead of `if` statements, and `.map()` instead of `for` loops.
-
-| Syntax | Usage | Example |
-|--------|-------|---------|
-| `()` | Wrap JSX elements | `const el = (<div>...</div>)` |
-| `{}` | Embed JavaScript expressions | `<h1>Hello {name}</h1>` |
-
-> **Tip:** Think of `{}` as an escape hatch from JSX back into JavaScript. Everything inside curly braces is evaluated as JavaScript code.
-
-#### What Can Go Inside `{}` ? [web:8]
-
-```javascript
-// ✅ Strings
-<h1>{"Hello World"}</h1>
-
-// ✅ Numbers
-<p>{42}</p>
-
-// ✅ Math expressions
-<p>{10 + 20}</p>
-
-// ✅ Variables
-<p>{userName}</p>
-
-// ✅ Function calls
-<p>{getUserName()}</p>
-
-// ✅ Ternary operators
-<p>{isLoggedIn ? "Welcome back!" : "Please log in"}</p>
-
-// ✅ Arrays (will be joined)
-<p>{[1, 2, 3, 4]}</p>
-
-// ✅ Object properties
-<p>{user.name}</p>
-
-// ❌ Objects directly (will cause error!)
-<p>{user}</p> // ❌ Objects are not valid as React child [web:19]
-
-// ❌ if statements (use ternary instead!)
-<p>{if (true) { "Hello" }}</p> // ❌ Syntax error
-```
-
-### 3. Conditional Rendering in JSX
-
-```javascript
-const isLoggedIn = true;
-const userName = "Alex";
-
-// Method 1: Ternary operator (most common)
-const element = (
-  <div>
-    {isLoggedIn ? (
-      <h1>Welcome back, {userName}!</h1>
-    ) : (
-      <h1>Please sign in</h1>
-    )}
-  </div>
-);
-
-// Method 2: Logical AND (&&) operator
-const element = (
-  <div>
-    {isLoggedIn && <h1>Welcome back, {userName}!</h1>}
-    {!isLoggedIn && <h1>Please sign in</h1>}
-  </div>
-);
-
-// Method 3: Variable assignment (for complex logic)
-let greeting;
-if (isLoggedIn) {
-  greeting = <h1>Welcome back, {userName}!</h1>;
-} else {
-  greeting = <h1>Please sign in</h1>;
+```jsx
+// ❌ WRONG — Two siblings at root level
+function Profile() {
+  return (
+    <h1>John Doe</h1>
+    <p>Developer</p>   // Syntax Error!
+  );
 }
 
-const element = <div>{greeting}</div>;
+// ✅ CORRECT — Wrapped in a <div>
+function Profile() {
+  return (
+    <div>
+      <h1>John Doe</h1>
+      <p>Developer</p>
+    </div>
+  );
+}
+
+// ✅ BETTER — Use a Fragment (no extra node in DOM)
+function Profile() {
+  return (
+    <>
+      <h1>John Doe</h1>
+      <p>Developer</p>
+    </>
+  );
+}
 ```
 
-### 4. Rendering Lists in JSX
+> 💡 **Use `<>...</>`** (React Fragment) when you don't want an unnecessary `<div>` in your DOM tree — keeps the HTML clean.
 
-```javascript
-const fruits = ["Apple", "Banana", "Orange", "Mango"];
+---
 
-const element = (
-  <ul>
-    {fruits.map((fruit, index) => (
-      <li key={index}>{fruit}</li>
-    ))}
-  </ul>
-);
+### 📏 Rule 2 — All Tags Must Be Closed
+
+HTML allows unclosed tags. JSX does **not**. Every tag must be explicitly closed.
+
+```jsx
+// ❌ WRONG — HTML habits won't work here
+<img src="avatar.png">
+<input type="text">
+<br>
+
+// ✅ CORRECT — Self-closing syntax
+<img src="avatar.png" />
+<input type="text" />
+<br />
 ```
 
-**⚠️ Important:** Always use a unique `key` prop when rendering lists [web:19]. Keys help React identify which items have changed, added, or removed.
+---
 
-```javascript
-// ❌ BAD - Using index as key (can cause performance issues)
-{items.map((item, index) => <Item key={index} {...item} />)}
+### 📏 Rule 3 — camelCase Attributes
 
-// ✅ GOOD - Using unique identifier
-{items.map(item => <Item key={item.id} {...item} />)}
+HTML attributes use lowercase. JSX attributes use **camelCase** because JSX is inside JavaScript, and CSS properties/event handlers follow JS naming conventions.
+
+```jsx
+// ❌ WRONG — HTML style
+<button class="btn" onclick="submit()">
+  <label for="email">Email</label>
+</button>
+
+// ✅ CORRECT — JSX camelCase style
+<button className="btn" onClick={submit}>
+  <label htmlFor="email">Email</label>
+</button>
 ```
 
-### 5. Comments in JSX [web:3]
+| HTML | JSX | Reason |
+|------|-----|--------|
+| `class` | `className` | `class` is a reserved JS keyword |
+| `for` | `htmlFor` | `for` is a reserved JS keyword (loops) |
+| `onclick` | `onClick` | JS event naming convention |
+| `onchange` | `onChange` | JS event naming convention |
+| `tabindex` | `tabIndex` | camelCase convention |
+| `readonly` | `readOnly` | camelCase convention |
 
-```javascript
-const element = (
-  <div>
-    {/* This is a comment in JSX */}
-    <h1>Hello World</h1>
+---
 
-    {/* 
-      Multi-line comments
-      work like this 
-    */}
-  </div>
-);
+### 🔥 Embedding JavaScript — The `{}` Power
+
+Curly braces `{}` are your **escape hatch from JSX back into JavaScript**. Anything inside `{}` is evaluated as a JavaScript expression.
+
+> 🧠 **Expression vs Statement:**
+> An **expression** produces a value → allowed inside `{}`
+> A **statement** performs an action → NOT allowed inside `{}`
+
+```jsx
+const user = {
+  name     : "Aarav Mehta",
+  role     : "React Developer",
+  followers: 4200,
+  isOnline : true
+};
+
+function ProfileCard() {
+  return (
+    <div className="card">
+      {/* ✅ Variable */}
+      <h2>{user.name}</h2>
+
+      {/* ✅ String method */}
+      <p>{user.role.toUpperCase()}</p>
+
+      {/* ✅ Math expression */}
+      <span>{user.followers > 1000 ? `${(user.followers/1000).toFixed(1)}k` : user.followers} followers</span>
+
+      {/* ✅ Ternary (conditional) */}
+      <span>{user.isOnline ? "🟢 Online" : "🔴 Offline"}</span>
+
+      {/* ✅ Logical AND — renders only if true */}
+      {user.followers > 1000 && <span>⭐ Popular Creator</span>}
+    </div>
+  );
+}
+```
+
+**What can go inside `{}`?**
+
+| Type | Example | Allowed? |
+|------|---------|:--------:|
+| Variable | `{name}` | ✅ |
+| Math | `{price * 1.18}` | ✅ |
+| String method | `{name.toUpperCase()}` | ✅ |
+| Ternary | `{x ? "yes" : "no"}` | ✅ |
+| Logical `&&` | `{isAdmin && <Badge />}` | ✅ |
+| Function call | `{getGreeting()}` | ✅ |
+| `if` statement | `{if(x){...}}` | ❌ |
+| `for` loop | `{for(...){...}}` | ❌ |
+| Object directly | `{userObject}` | ❌ |
+
+---
+
+### 🔀 Conditional Rendering
+
+```jsx
+const isLoggedIn = true;
+const role       = "admin";
+
+function Dashboard() {
+  return (
+    <div>
+      {/* Method 1: Ternary — for if/else */}
+      {isLoggedIn
+        ? <h2>Welcome back! 👋</h2>
+        : <h2>Please sign in 🔐</h2>
+      }
+
+      {/* Method 2: Logical && — for "show only if true" */}
+      {role === "admin" && <button>🛠 Admin Panel</button>}
+
+      {/* Method 3: Stored in variable — for complex logic */}
+      {(() => {
+        if (role === "admin")   return <span>🔑 Admin</span>;
+        if (role === "mod")     return <span>🛡 Moderator</span>;
+        return <span>👤 User</span>;
+      })()}
+    </div>
+  );
+}
+```
+
+---
+
+### 📋 Rendering Lists with `.map()`
+
+React uses JavaScript's `.map()` to transform data arrays into JSX arrays.
+
+> 🧠 **Why `.map()`?** Because `.map()` is an **expression** (returns a new array) — while `for` is a **statement** — and only expressions are allowed in JSX `{}`.
+
+```jsx
+const movies = [
+  { id: 1, title: "Inception",      rating: 9.3, genre: "Sci-Fi"  },
+  { id: 2, title: "Interstellar",   rating: 8.7, genre: "Sci-Fi"  },
+  { id: 3, title: "The Dark Knight",rating: 9.0, genre: "Action"  },
+  { id: 4, title: "Parasite",       rating: 8.6, genre: "Thriller"},
+];
+
+function MovieList() {
+  return (
+    <ul>
+      {movies.map((movie) => (
+        <li key={movie.id}>
+          🎬 <strong>{movie.title}</strong> — ⭐ {movie.rating} | {movie.genre}
+        </li>
+      ))}
+    </ul>
+  );
+}
+```
+
+> ⚠️ **Always add a `key` prop** when rendering lists. Keys help React identify which items changed, were added, or removed — making re-renders efficient.
+>
+> Use `item.id` as the key, **never the array index**.
+
+```jsx
+// ❌ BAD — Index as key causes bugs when list is reordered/filtered
+{movies.map((movie, index) => <MovieCard key={index} {...movie} />)}
+
+// ✅ GOOD — Stable unique ID
+{movies.map((movie) => <MovieCard key={movie.id} {...movie} />)}
 ```
 
 ---
 
 ## 🧩 Functional Components
 
-### Theory: What Are Components?
+### 📖 Theory
 
-**Components** are the building blocks of React applications [web:6][web:9]. They're like LEGO blocks - small, reusable pieces that you can combine to build complex user interfaces.
+A **component** is a JavaScript function that:
+1. Accepts an optional input called **props**
+2. Returns **JSX** (what to show on screen)
 
-### 🏗️ The LEGO Analogy
+Components let you split the UI into **independent, reusable pieces**. Instead of one giant HTML file, you build small focused blocks and compose them together — just like the LEGO analogy.
 
-Imagine building with LEGO:
-- Each LEGO block = A React Component
-- Different colored blocks = Different types of components
-- Instructions manual = Props (we'll cover this soon!)
-- The final castle/car/house = Your complete app
+**Two types exist — but Functional Components are the modern standard:**
 
-You can:
-- ✅ Reuse the same block multiple times
-- ✅ Combine blocks to make bigger structures
-- ✅ Swap blocks without breaking everything else
-- ✅ Share your block designs (components) with others
+| | Functional Component | Class Component |
+|-|---------------------|-----------------|
+| **Syntax** | Simple function | `class X extends React.Component` |
+| **Hooks support** | ✅ Full support | ❌ Limited |
+| **Readability** | ✅ Clean & concise | ❌ Verbose |
+| **Performance** | ✅ Optimized | Heavier |
+| **React Team Recommendation** | ✅ Use this | ❌ Legacy code only |
 
-### Anatomy of a Functional Component
+---
 
-```javascript
-// Basic structure
-function ComponentName() {
-  // JavaScript logic goes here (optional)
+### 🏗️ Component Tree — Visual Structure
 
-  // Must return JSX
-  return (
-    <div>
-      {/* Your JSX here */}
-    </div>
-  );
-}
+```
+                    ┌───────────────────────┐
+                    │      App (Root)        │   ← Entry point
+                    └───────────┬───────────┘
+             ┌─────────────────┼─────────────────┐
+             ▼                 ▼                 ▼
+     ┌───────────────┐  ┌────────────┐  ┌───────────────┐
+     │    Header     │  │    Main    │  │    Footer     │
+     └───────┬───────┘  └─────┬──────┘  └───────────────┘
+             │                │
+      ┌──────┴─────┐    ┌─────┴──────┐
+      ▼            ▼    ▼            ▼
+   [Logo]       [Nav] [MovieList] [Sidebar]
+                           │
+                    ┌──────┴──────┐
+                    ▼             ▼
+               [MovieCard]  [MovieCard]
+
+  📌 Data flows: Parent → Child (top to bottom ⬇️ only)
 ```
 
-### Creating Your First Component
+---
 
-```javascript
-// Example 1: Simple Greeting Component
-function Greeting() {
-  return <h1>Hello, welcome to React! 👋</h1>;
-}
+### 🧬 Ways to Write a Functional Component
 
-// Example 2: Component with logic
-function CurrentTime() {
-  const now = new Date();
-  const timeString = now.toLocaleTimeString();
-
+```jsx
+// Style 1 — Function Declaration (most readable)
+function MovieCard({ title, rating }) {
   return (
-    <div>
-      <h2>Current Time</h2>
-      <p>It's {timeString}</p>
+    <div className="movie-card">
+      <h3>🎬 {title}</h3>
+      <p>⭐ {rating}</p>
     </div>
   );
 }
 
-// Example 3: Arrow function component (modern style)
-const WelcomeMessage = () => {
-  return <h1>Welcome to React! 🚀</h1>;
+// Style 2 — Arrow Function with explicit return
+const MovieCard = ({ title, rating }) => {
+  return (
+    <div className="movie-card">
+      <h3>🎬 {title}</h3>
+      <p>⭐ {rating}</p>
+    </div>
+  );
 };
 
-// Example 4: Implicit return (super clean!)
-const Footer = () => <footer>© 2026 My App</footer>;
+// Style 3 — Arrow Function with implicit return (one-liners)
+const Badge = ({ label }) => <span className="badge">{label}</span>;
+
+// Style 4 — With logic before return
+function TemperatureCard({ celsius }) {
+  const fahrenheit = (celsius * 9/5) + 32;
+  const emoji      = celsius > 30 ? "🔥" : celsius < 10 ? "🥶" : "😊";
+
+  return (
+    <div>
+      <p>{emoji} {celsius}°C / {fahrenheit}°F</p>
+    </div>
+  );
+}
 ```
 
-### 📐 Component Architecture Visualization
+---
 
-```
-┌─────────────────────────────────────────┐
-│           App Component                 │  ← Root Component
-│  ┌─────────────────────────────────┐    │
-│  │      Header Component           │    │  ← Child Components
-│  │  ┌──────────┐  ┌──────────┐     │    │
-│  │  │   Logo   │  │   Menu   │     │    │  ← Grandchild Components
-│  │  └──────────┘  └──────────┘     │    │
-│  └─────────────────────────────────┘    │
-│                                         │
-│  ┌─────────────────────────────────┐    │
-│  │    Main Content Component       │    │
-│  │  ┌──────────┐  ┌──────────┐     │    │
-│  │  │ Article  │  │  Sidebar │     │    │
-│  │  └──────────┘  └──────────┘     │    │
-│  └─────────────────────────────────┘    │
-│                                         │
-│  ┌─────────────────────────────────┐    │
-│  │      Footer Component           │    │
-│  └─────────────────────────────────┘    │
-└─────────────────────────────────────────┘
-```
+### ✍️ Component Naming Rules
 
-### Component Naming Rules ✍️
-
-```javascript
-// ✅ CORRECT - PascalCase (capitalize first letter)
-function UserProfile() {}
+```jsx
+// ✅ PascalCase — React recognizes as a component
+function UserProfile()   {}
 function NavigationBar() {}
-function ProductCard() {}
+function ProductCard()   {}
 
-// ❌ WRONG - lowercase (React won't recognize it!)
-function userProfile() {} // Treated as HTML tag, not component
-function navigationbar() {}
+// ❌ lowercase — React treats it as an HTML element!
+function userProfile()   {}   // → renders <userprofile> in DOM (wrong!)
+function productcard()   {}   // → not a component
 ```
 
-**🎯 Rule:** Component names MUST start with a capital letter [web:9]!
+> 🔑 **Rule:** Component names **must** start with a capital letter.
+> React uses this to distinguish your components from built-in HTML tags.
 
-### Using Components
+---
 
-```javascript
-// Define components
-function Header() {
-  return <h1>My Awesome Website</h1>;
+### 🧱 Composing Components Together
+
+```jsx
+// Small, single-purpose components
+function Avatar({ src, name }) {
+  return <img src={src} alt={name} className="avatar" />;
 }
 
-function MainContent() {
-  return <p>Welcome to my site!</p>;
+function Username({ name, handle }) {
+  return (
+    <div>
+      <h3>{name}</h3>
+      <span>@{handle}</span>
+    </div>
+  );
 }
 
-function Footer() {
-  return <footer>© 2026</footer>;
+function FollowerCount({ count }) {
+  const display = count >= 1000 ? `${(count / 1000).toFixed(1)}k` : count;
+  return <p>👥 {display} followers</p>;
 }
 
-// Compose them in a parent component
+// Composed into a bigger component
+function TwitterCard({ user }) {
+  return (
+    <div className="twitter-card">
+      <Avatar        src={user.avatar}   name={user.name}   />
+      <Username      name={user.name}    handle={user.handle} />
+      <FollowerCount count={user.followers}                  />
+    </div>
+  );
+}
+
+// App composes everything
 function App() {
-  return (
-    <div>
-      <Header />
-      <MainContent />
-      <Footer />
-    </div>
-  );
+  const user = {
+    name     : "Madhvendra Singh",
+    handle   : "madhvendra007",
+    avatar   : "/avatar.jpg",
+    followers: 12800
+  };
+
+  return <TwitterCard user={user} />;
 }
-```
-
-### Component Best Practices 🌟 [web:6][web:9]
-
-#### 1. **Keep Components Small and Focused**
-
-```javascript
-// ❌ BAD - Component doing too much
-function UserDashboard() {
-  return (
-    <div>
-      <header>...</header>
-      <nav>...</nav>
-      <main>...</main>
-      <aside>...</aside>
-      <footer>...</footer>
-    </div>
-  );
-}
-
-// ✅ GOOD - Split into smaller components
-function UserDashboard() {
-  return (
-    <div>
-      <Header />
-      <Navigation />
-      <MainContent />
-      <Sidebar />
-      <Footer />
-    </div>
-  );
-}
-```
-
-**💡 Principle:** One component = One responsibility
-
-#### 2. **Use Functional Components** [web:6][web:9]
-
-In 2025, functional components are the standard. They're:
-- ✅ Easier to read and write
-- ✅ Easier to test
-- ✅ Work seamlessly with React Hooks
-- ✅ Better performance
-
-```javascript
-// ✅ Modern way - Functional Component
-function Welcome() {
-  return <h1>Hello!</h1>;
-}
-
-// ❌ Old way - Class Component (avoid for new code)
-class Welcome extends React.Component {
-  render() {
-    return <h1>Hello!</h1>;
-  }
-}
-```
-
-#### 3. **Meaningful Names** [web:9]
-
-```javascript
-// ❌ BAD - Unclear names
-function Comp1() {}
-function Thing() {}
-function Data() {}
-
-// ✅ GOOD - Descriptive names
-function UserProfile() {}
-function ShoppingCart() {}
-function ProductCard() {}
 ```
 
 ---
 
 ## 🎁 Props & Component Composition
 
-### Theory: What Are Props?
+### 📖 Theory
 
-**Props** (short for "properties") are how you pass data from a parent component to a child component [web:10]. Think of props as arguments to a function!
+**Props** (short for *properties*) are the mechanism for passing data **from a parent component to a child component** — exactly like passing arguments to a function.
 
-### 🎁 Real-World Analogy
-
-Imagine you're ordering a custom pizza:
-- **The Pizza Shop** = Child Component
-- **Your Order** = Props
-- **The Pizza They Make** = Rendered Component
-
-You tell them: "Large size, pepperoni, extra cheese" (props), and they make your custom pizza based on those specifications!
-
-### Props Flow Visualization
+**Three fundamental rules of Props:**
+1. **Unidirectional** — Data flows only one way: parent → child
+2. **Read-only** — A component must never modify its own props
+3. **Explicit** — Props must be passed deliberately (nothing is implicit)
 
 ```
-┌──────────────────────────────────────┐
-│       Parent Component               │
-│                                      │
-│  data = "Hello"                      │
-│  color = "blue"                      │
-│         │                            │
-│         │ (passes props down)        │
-│         ▼                            │
-│  ┌────────────────────────┐          │
-│  │   Child Component      │          │
-│  │                        │          │
-│  │  receives props:       │          │
-│  │  { data, color }       │          │
-│  └────────────────────────┘          │
-└──────────────────────────────────────┘
-
-Note: Props flow ONE WAY (parent → child) 🔽
+┌─────────────────────────────────────────────────────────┐
+│                    Parent Component                     │
+│                                                         │
+│   const product = { name: "MacBook", price: 120000 }    │
+│                          │                              │
+│               passes props down ⬇️                      │
+│                          │                              │
+│          ┌───────────────▼────────────────┐             │
+│          │         Child Component        │             │
+│          │                                │             │
+│          │  function ProductCard({        │             │
+│          │    name, price                 │             │
+│          │  }) { ... }                    │             │
+│          └────────────────────────────────┘             │
+│                                                         │
+│  ⚠️  Child CANNOT send props back up to Parent          │
+│     (That's what State & Callbacks are for — Day 2!)    │
+└─────────────────────────────────────────────────────────┘
 ```
 
-### Passing Props: Step-by-Step
+---
 
-#### Step 1: Define a Component That Accepts Props
+### 📦 Passing Different Types of Props
 
-```javascript
-import React from "react";
-
-// Greeting component (destructuring props)
-function Greeting({ name }) {
-  return <h1>Hello, {name}!</h1>;
-}
-
-// UserCard component (multiple props)
-function UserCard({ name, age, location }) {
+```jsx
+function ProductCard({ name, price, rating, inStock, tags, onAddToCart }) {
   return (
-    <div>
+    <div className={`product ${inStock ? "available" : "sold-out"}`}>
       <h2>{name}</h2>
-      <p>Age: {age}</p>
-      <p>Location: {location}</p>
+      <p>₹{price.toLocaleString()}</p>
+      <p>⭐ {rating}/5</p>
+
+      {/* Render array prop */}
+      <div className="tags">
+        {tags.map((tag, i) => <span key={i} className="tag">#{tag}</span>)}
+      </div>
+
+      {/* Render based on boolean prop */}
+      {inStock
+        ? <button onClick={onAddToCart}>🛒 Add to Cart</button>
+        : <button disabled>❌ Out of Stock</button>
+      }
     </div>
   );
 }
 
-// Main component (exported as default)
-export default function App() {
+// Parent passes all types of props
+function App() {
   return (
-    <div>
-      <Greeting name="John" />
-      <UserCard name="Alice" age={25} location="New York" />
-    </div>
+    <ProductCard
+      name        = "MacBook Pro M3"
+      price       = {189990}           // number — use {}
+      rating      = {4.8}              // number — use {}
+      inStock     = {true}             // boolean — use {}
+      tags        = {["Apple", "Laptop", "M3 Chip"]}  // array — use {}
+      onAddToCart = {() => alert("Added!")}  // function — use {}
+    />
   );
 }
 ```
 
-#### Step 2: Pass Data to the Component [web:10]
+**Props type quick reference:**
 
-```javascript
+| Data Type | Syntax | Example |
+|-----------|--------|---------|
+| String | Quotes or `{}` | `name="Alice"` or `name={"Alice"}` |
+| Number | `{}` | `age={25}` |
+| Boolean | `{}` or shorthand | `isActive={true}` or just `isActive` |
+| Array | `{}` | `items={[1,2,3]}` |
+| Object | `{}` | `user={{ name: "Alice" }}` |
+| Function | `{}` | `onClick={() => doSomething()}` |
+
+---
+
+### 🎯 Default Props
+
+```jsx
+// Give props fallback values using ES6 default parameters
+function Avatar({ src = "/default-avatar.png", size = 48, alt = "User" }) {
+  return (
+    <img
+      src    = {src}
+      alt    = {alt}
+      width  = {size}
+      height = {size}
+      style  = {{ borderRadius: "50%" }}
+    />
+  );
+}
+
+// All defaults apply
+<Avatar />
+
+// Partial override
+<Avatar src="/madhvendra.jpg" size={96} />
+
+// Full override
+<Avatar src="/team.jpg" size={64} alt="Team Photo" />
+```
+
+---
+
+### 👶 `props.children` — The Container Pattern
+
+`children` is a **special built-in prop** that automatically contains everything placed between a component's opening and closing tags. This is how you build container/wrapper components.
+
+```jsx
+// Reusable card container — doesn't care what's inside!
+function Card({ title, theme = "light", children }) {
+  const styles = {
+    background : theme === "dark" ? "#1e1e2e" : "#ffffff",
+    color      : theme === "dark" ? "#cdd6f4" : "#333333",
+    border     : "1px solid #e0e0e0",
+    borderRadius: "12px",
+    padding    : "20px",
+    margin     : "10px"
+  };
+
+  return (
+    <div style={styles}>
+      {title && <h3 style={{ borderBottom: "1px solid #ccc", paddingBottom: "8px" }}>{title}</h3>}
+      {children}
+    </div>
+  );
+}
+
+// Totally different content — same Card wrapper!
 function App() {
   return (
     <div>
-      {/* Passing props just like HTML attributes */}
-      <Greeting name="Sarah" />
-      <Greeting name="Alex" />
+      {/* Card with text */}
+      <Card title="📰 News Update">
+        <p>React 19 was released with exciting new features!</p>
+        <a href="#">Read more →</a>
+      </Card>
 
-      <UserCard 
-        name="John Doe" 
-        age={28} 
-        location="New York" 
-      />
+      {/* Card with a form */}
+      <Card title="🔐 Login" theme="dark">
+        <input type="email" placeholder="Email" />
+        <input type="password" placeholder="Password" />
+        <button>Sign In</button>
+      </Card>
+
+      {/* Card without title */}
+      <Card>
+        <img src="/banner.jpg" alt="Banner" />
+      </Card>
     </div>
   );
 }
 ```
 
-**🔑 Key Points:**
-- String props: `name="Sarah"` (quotes, no braces)
-- Number props: `age={28}` (curly braces!)
-- Boolean props: `isActive={true}` or just `isActive`
-- Array/Object props: `items={['a', 'b', 'c']}`
+### Regular Props vs Children — When to Use Which?
 
-### Props Examples: From Simple to Complex
+| | Regular Props | `children` |
+|-|:-------------:|:----------:|
+| **Syntax** | `<Card title="Hi" />` | `<Card>Hi</Card>` |
+| **Data type** | Strings, numbers, booleans | Any JSX — even other components |
+| **Structure** | Fixed, predictable | Flexible, dynamic |
+| **Best for** | Configuration data | Wrapper / layout components |
+| **Example** | `<Button color="blue">` | `<Modal><Form /></Modal>` |
 
-#### Example 1: Simple Text Props
+---
 
-```javascript
-function WelcomeMessage({ message }) {
-  return <p>{message}</p>;
+### 🔗 Prop Drilling vs Composition
+
+```jsx
+// 🔴 PROP DRILLING — passing props through every level (gets messy!)
+function App() {
+  const theme = "dark";
+  return <Page theme={theme} />;           // passes theme ↓
+}
+function Page({ theme }) {
+  return <Sidebar theme={theme} />;        // passes theme ↓
+}
+function Sidebar({ theme }) {
+  return <Button theme={theme} />;         // passes theme ↓
+}
+function Button({ theme }) {
+  return <button className={theme}>Click</button>;  // finally uses it
 }
 
-// Usage
-<WelcomeMessage message="Welcome to React!" />
-```
-
-#### Example 2: Multiple Props
-
-```javascript
-function ProductCard({ title, price, image, inStock }) {
+// ✅ COMPOSITION — use children to avoid unnecessary prop passing
+function App() {
   return (
-    <div className="product-card">
-      <img src={image} alt={title} />
-      <h3>{title}</h3>
-      <p>${price}</p>
-      {inStock ? (
-        <button>Add to Cart</button>
-      ) : (
-        <p>Out of Stock</p>
-      )}
-    </div>
+    <Page>
+      <Sidebar>
+        <Button className="dark">Click</Button>
+      </Sidebar>
+    </Page>
   );
 }
-
-// Usage
-<ProductCard 
-  title="Wireless Headphones"
-  price={79.99}
-  image="/headphones.jpg"
-  inStock={true}
-/>
-```
-
-#### Example 3: Props with Objects
-
-```javascript
-function UserProfile({ user }) {
-  return (
-    <div>
-      <h2>{user.name}</h2>
-      <p>Email: {user.email}</p>
-      <p>Age: {user.age}</p>
-    </div>
-  );
-}
-
-// Usage
-const userData = {
-  name: "Alice Johnson",
-  email: "alice@example.com",
-  age: 30
-};
-
-<UserProfile user={userData} />
-```
-
-#### Example 4: Props with Arrays
-
-```javascript
-function TodoList({ todos }) {
-  return (
-    <ul>
-      {todos.map((todo, index) => (
-        <li key={index}>{todo}</li>
-      ))}
-    </ul>
-  );
-}
-
-// Usage
-const myTodos = ["Learn React", "Build a project", "Deploy app"];
-<TodoList todos={myTodos} />
-```
-
-### Default Props 🎨
-
-Give your props default values when they're not provided:
-
-```javascript
-// Method 1: Default parameters (ES6)
-function Button({ text = "Click me", color = "blue" }) {
-  return (
-    <button style={{ backgroundColor: color }}>
-      {text}
-    </button>
-  );
-}
-
-// Usage
-<Button /> // Uses defaults: "Click me", blue
-<Button text="Submit" /> // Custom text, default color
-<Button text="Cancel" color="red" /> // Both custom
-```
-
-### Props.children: The Special Prop ✨
-
-`children` is a special prop that represents whatever you put BETWEEN the opening and closing tags [web:7]:
-
-```javascript
-// Component definition
-function Card({ children }) {
-  return (
-    <div className="card">
-      {children}
-    </div>
-  );
-}
-
-// Usage - content between tags becomes 'children'
-<Card>
-  <h2>Card Title</h2>
-  <p>This is the card content!</p>
-  <button>Click me</button>
-</Card>
-```
-
-## Props vs Children in React
-
-**Regular props** are passed as attributes in the opening tag, while **children** is a special prop that represents content placed between opening and closing tags.
-
-### Regular Props Example
-```javascript
-function Card({ title, description }) {
-  return (
-    <div className="card">
-      <h2>{title}</h2>
-      <p>{description}</p>
-    </div>
-  );
-}
-
-// Usage - props passed as attributes
-<Card title="Card Title" description="This is the card content!" />
-```
-
-### Children Prop Example
-```javascript
-function Card({ children }) {
-  return (
-    <div className="card">
-      {children}
-    </div>
-  );
-}
-
-// Usage - content between tags becomes 'children'
-<Card>
-  <h2>Card Title</h2>
-  <p>This is the card content!</p>
-  <button>Click me</button>
-</Card>
-```
-
-> **Note:** `children` is automatically passed by React when you put content between component tags. You don't explicitly write `children={...}`.
-
-### Comparison
-
-| Feature | Regular Props | Children Prop |
-|---------|---------------|---------------|
-| **Syntax** | `<Card title="Hello" />` | `<Card>Hello</Card>` |
-| **Passing data** | Attributes in opening tag | Content between tags |
-| **Flexibility** | Fixed structure | Can pass any JSX/components |
-| **Use case** | Simple data (strings, numbers) | Complex nested content |
-
-### Combined Usage
-You can use both regular props and children together:
-```javascript
-function Card({ title, children }) {
-  return (
-    <div className="card">
-      <h2>{title}</h2>
-      <div className="content">
-        {children}
-      </div>
-    </div>
-  );
-}
-
-// Usage
-<Card title="My Card">
-  <p>This is flexible content!</p>
-  <button>Action</button>
-</Card>
-```
-
-> **Tip:** Use `children` when you want to create wrapper components (like layouts, containers, modals) where the content inside can vary. Use regular props for specific, predictable data.
-
-### Component Composition: Building with Blocks 🏗️
-
-**Composition** means combining smaller components to create larger ones [web:7][web:9]:
-
-```javascript
-// Small, reusable components
-function Avatar({ src, alt }) {
-  return <img src={src} alt={alt} className="avatar" />;
-}
-
-function UserName({ name }) {
-  return <h3>{name}</h3>;
-}
-
-function UserBio({ bio }) {
-  return <p>{bio}</p>;
-}
-
-// Composed component using the above
-function UserCard({ user }) {
-  return (
-    <div className="user-card">
-      <Avatar src={user.avatar} alt={user.name} />
-      <UserName name={user.name} />
-      <UserBio bio={user.bio} />
-    </div>
-  );
-}
-
-// Usage
-const user = {
-  name: "Emma Watson",
-  avatar: "/emma.jpg",
-  bio: "Software Developer & Tech Enthusiast"
-};
-
-<UserCard user={user} />
-```
-
-### Props Best Practices 🌟
-
-#### 1. **Destructure Props for Clarity**
-
-```javascript
-// ❌ LESS CLEAR
-function UserCard(props) {
-  return (
-    <div>
-      <h2>{props.name}</h2>
-      <p>{props.email}</p>
-    </div>
-  );
-}
-
-// ✅ MORE CLEAR
-function UserCard({ name, email }) {
-  return (
-    <div>
-      <h2>{name}</h2>
-      <p>{email}</p>
-    </div>
-  );
-}
-```
-
-#### 2. **Keep Props Simple**
-
-```javascript
-// ❌ BAD - Too many individual props
-<UserProfile 
-  firstName="John"
-  lastName="Doe"
-  email="john@example.com"
-  age={30}
-  city="NYC"
-  country="USA"
-  phone="123-456"
-/>
-
-// ✅ GOOD - Group related data
-const user = {
-  name: { first: "John", last: "Doe" },
-  contact: { email: "john@example.com", phone: "123-456" },
-  location: { city: "NYC", country: "USA" },
-  age: 30
-};
-
-<UserProfile user={user} />
-```
-
-#### 3. **Validate Props (TypeScript or PropTypes)**
-
-```javascript
-// With PropTypes (for JavaScript)
-import PropTypes from 'prop-types';
-
-function Button({ text, onClick, disabled }) {
-  return <button onClick={onClick} disabled={disabled}>{text}</button>;
-}
-
-Button.propTypes = {
-  text: PropTypes.string.isRequired,
-  onClick: PropTypes.func.isRequired,
-  disabled: PropTypes.bool
-};
 ```
 
 ---
 
 ## 🎨 Basic Styling in React
 
-There are multiple ways to style React components [web:11]. Let's explore each method!
+### 📖 Theory
 
-### Method 1: Inline Styles 🖌️
+React gives you **four main ways** to style components. Each has different trade-offs in scope, reusability, and dynamic capability. Choosing the right method depends on whether your styles are **static or dynamic**, **global or component-scoped**.
 
-Inline styles in React are JavaScript objects with camelCase properties [web:13][web:14][web:15]:
+---
 
-```javascript
-function StyledButton() {
-  // Define style object
-  const buttonStyle = {
-    backgroundColor: 'blue',    // background-color → backgroundColor
-    color: 'white',
-    padding: '10px 20px',       // String values for CSS units
-    fontSize: '16px',           // font-size → fontSize
-    border: 'none',
-    borderRadius: '5px',        // border-radius → borderRadius
-    cursor: 'pointer'
+### Method 1 — Inline Styles 🖌️
+
+Inline styles are written as **JavaScript objects**. CSS property names use camelCase because they are JS object keys.
+
+```jsx
+function PriceTag({ price, isOnSale }) {
+  const tagStyle = {
+    display        : "inline-block",
+    backgroundColor: isOnSale ? "#e74c3c" : "#2ecc71",
+    color          : "#ffffff",
+    padding        : "6px 14px",
+    borderRadius   : "20px",
+    fontWeight     : "bold",
+    fontSize       : "14px"
   };
 
-  return <button style={buttonStyle}>Click Me</button>;
+  return (
+    <span style={tagStyle}>
+      {isOnSale ? `🏷️ ₹${price} SALE` : `₹${price}`}
+    </span>
+  );
 }
 ```
 
-#### Inline Styles: Quick Reference
-
-```javascript
-// CSS Property → React Style Property
-'background-color'   →  backgroundColor
-'font-size'         →  fontSize
-'margin-top'        →  marginTop
-'border-radius'     →  borderRadius
-'z-index'           →  zIndex
-
-// Number values (px assumed)
-fontSize: 16        →  font-size: 16px
-padding: 10         →  padding: 10px
-
-// String values (specify units)
-fontSize: '16px'
-fontSize: '1.5rem'
-width: '50%'
+**CSS → JSX Property Conversion:**
+```
+CSS                  JSX (camelCase)
+───────────────────────────────────
+background-color  →  backgroundColor
+font-size         →  fontSize
+border-radius     →  borderRadius
+margin-top        →  marginTop
+z-index           →  zIndex
+flex-direction    →  flexDirection
 ```
 
-#### Dynamic Inline Styles
+> ✅ **Best for:** Dynamic styles that change based on props or state
+> ❌ **Limitation:** Cannot use `:hover`, `:focus`, or media queries
 
-```javascript
-function DynamicButton({ isPrimary }) {
-  const buttonStyle = {
-    backgroundColor: isPrimary ? 'blue' : 'gray',
-    color: 'white',
-    padding: '10px 20px',
-    border: 'none',
-    borderRadius: '5px'
-  };
+---
 
-  return <button style={buttonStyle}>Click Me</button>;
+### Method 2 — External CSS Classes 📄
+
+The classic approach — write CSS in a separate `.css` file and import it.
+
+```css
+/* MovieCard.css */
+.movie-card {
+  background   : #1a1a2e;
+  color        : #e0e0e0;
+  border-radius: 12px;
+  padding      : 20px;
+  width        : 220px;
+  transition   : transform 0.3s ease, box-shadow 0.3s ease;
+  cursor       : pointer;
+}
+
+.movie-card:hover {
+  transform  : translateY(-8px);
+  box-shadow : 0 12px 24px rgba(0, 0, 0, 0.4);  /* hover — impossible with inline! */
+}
+
+.movie-title  { font-size: 18px; font-weight: 700; margin-bottom: 8px; }
+.movie-rating { color: #f1c40f; font-size: 14px; }
+.movie-genre  { background: #16213e; padding: 4px 10px; border-radius: 12px; font-size: 12px; }
+```
+
+```jsx
+import "./MovieCard.css";  // Import the CSS file
+
+function MovieCard({ title, rating, genre }) {
+  return (
+    <div className="movie-card">                     {/* className, NOT class */}
+      <h3 className="movie-title">{title}</h3>
+      <p  className="movie-rating">⭐ {rating}/10</p>
+      <span className="movie-genre">{genre}</span>
+    </div>
+  );
+}
+```
+
+> ✅ **Best for:** Static, reusable styles; pseudo-classes; media queries
+> ❌ **Watch out:** Class names are **global** — can accidentally override styles from other files
+
+---
+
+### Method 3 — CSS Modules 🎯
+
+CSS Modules work like external CSS but **scope class names locally** to the component — preventing naming conflicts across your app.
+
+```css
+/* MovieCard.module.css */
+.card   { background: #1a1a2e; border-radius: 12px; padding: 20px; }
+.title  { font-size: 18px; font-weight: 700; }
+.badge  { background: #e74c3c; color: #fff; padding: 4px 10px; border-radius: 20px; }
+```
+
+```jsx
+import styles from "./MovieCard.module.css";   // import as an object
+
+function MovieCard({ title, genre }) {
+  return (
+    <div className={styles.card}>
+      <h3 className={styles.title}>{title}</h3>
+      <span className={styles.badge}>{genre}</span>
+    </div>
+  );
+}
+
+// 🔍 React auto-generates unique class names:
+// styles.card  →  "MovieCard_card__3hKg4"
+// styles.title →  "MovieCard_title__x91aB"
+// This prevents collisions with other components' .card or .title classes!
+```
+
+---
+
+### Method 4 — Dynamic Conditional Classes 🎨
+
+Combine class names dynamically based on props using template literals:
+
+```jsx
+function Button({ variant = "primary", size = "md", disabled = false, children }) {
+  // Build class string dynamically
+  const classes = [
+    "btn",
+    `btn-${variant}`,           // btn-primary | btn-danger | btn-ghost
+    `btn-${size}`,              // btn-sm | btn-md | btn-lg
+    disabled ? "btn-disabled" : ""
+  ].filter(Boolean).join(" ");
+
+  return (
+    <button className={classes} disabled={disabled}>
+      {children}
+    </button>
+  );
 }
 
 // Usage
-<DynamicButton isPrimary={true} />  // Blue button
-<DynamicButton isPrimary={false} /> // Gray button
+<Button variant="primary"  size="lg">🚀 Deploy</Button>
+<Button variant="danger"   size="sm">🗑️ Delete</Button>
+<Button variant="ghost"    disabled>⏳ Loading...</Button>
 ```
 
-#### Inline Styles: Pros & Cons
+### Styling Methods at a Glance
 
-**✅ When to Use:**
-- Quick styling for single elements [web:18]
-- Dynamic styles based on props/state [web:18]
-- Component-specific styles that won't be reused
-- Small adjustments to existing styles
-
-**❌ When to Avoid:**
-- Cannot use pseudo-classes (`:hover`, `:focus`)
-- Cannot use media queries
-- Can become messy with many styles
-- No CSS optimization/minification
-
-### Method 2: CSS Classes (External CSS) 📝
-
-The traditional way - separate CSS file imported into your component:
-
-```javascript
-// UserCard.css
-.user-card {
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  padding: 20px;
-  margin: 10px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-}
-
-.user-card:hover {
-  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-}
-
-.user-name {
-  font-size: 24px;
-  color: #333;
-  margin-bottom: 10px;
-}
-
-.user-bio {
-  color: #666;
-  line-height: 1.6;
-}
-```
-
-```javascript
-// UserCard.jsx
-import './UserCard.css';  // Import CSS file
-
-function UserCard({ name, bio }) {
-  return (
-    <div className="user-card">
-      <h2 className="user-name">{name}</h2>
-      <p className="user-bio">{bio}</p>
-    </div>
-  );
-}
-```
-
-**🎯 Remember:** Use `className`, NOT `class`! [web:2][web:16]
-
-#### Conditional Classes
-
-```javascript
-function Button({ isPrimary, isDisabled }) {
-  // Method 1: Template literals
-  const buttonClass = `btn ${isPrimary ? 'btn-primary' : 'btn-secondary'} ${isDisabled ? 'btn-disabled' : ''}`;
-
-  return <button className={buttonClass}>Click Me</button>;
-}
-
-// Method 2: Array join
-function Button({ isPrimary, isDisabled }) {
-  const classes = [
-    'btn',
-    isPrimary ? 'btn-primary' : 'btn-secondary',
-    isDisabled && 'btn-disabled'
-  ].filter(Boolean).join(' ');
-
-  return <button className={classes}>Click Me</button>;
-}
-```
-
-### Method 3: CSS Modules 🎯
-
-CSS Modules scope styles locally to avoid naming conflicts:
-
-```css
-/* UserCard.module.css */
-.card {
-  border: 1px solid #ddd;
-  padding: 20px;
-}
-
-.title {
-  font-size: 24px;
-  color: blue;
-}
-```
-
-```javascript
-// UserCard.jsx
-import styles from './UserCard.module.css';
-
-function UserCard({ title }) {
-  return (
-    <div className={styles.card}>
-      <h2 className={styles.title}>{title}</h2>
-    </div>
-  );
-}
-```
-
-### Method 4: Combining Inline & External Styles
-
-```javascript
-import './Card.css';
-
-function Card({ isHighlighted }) {
-  // Inline style for dynamic values
-  const highlightStyle = {
-    border: isHighlighted ? '3px solid gold' : '1px solid #ddd'
-  };
-
-  return (
-    <div className="card" style={highlightStyle}>
-      <h2 className="card-title">My Card</h2>
-    </div>
-  );
-}
-```
-
-### Styling Best Practices 🌟
-
-#### 1. **Choose the Right Method** [web:18]
-
-```javascript
-// ✅ Inline: Dynamic, state-based styles
-<div style={{ backgroundColor: isActive ? 'green' : 'gray' }}>
-
-// ✅ CSS Classes: Reusable, static styles
-<div className="card">
-
-// ✅ CSS Modules: Component-scoped styles
-<div className={styles.card}>
-```
-
-#### 2. **Keep Styles Organized**
-
-```javascript
-// ❌ BAD - Messy inline styles
-<div style={{ padding: '10px', margin: '20px', backgroundColor: 'blue', color: 'white', fontSize: '16px' }}>
-
-// ✅ GOOD - Extract to variable
-const containerStyle = {
-  padding: '10px',
-  margin: '20px',
-  backgroundColor: 'blue',
-  color: 'white',
-  fontSize: '16px'
-};
-
-<div style={containerStyle}>
-```
-
-#### 3. **Use Meaningful Class Names**
-
-```javascript
-// ❌ BAD
-<div className="box1">
-<div className="thing">
-
-// ✅ GOOD
-<div className="user-profile-card">
-<div className="product-list-item">
-```
+| Method | Scope | `:hover` / Media Queries | Dynamic Styles | Best For |
+|--------|:-----:|:------------------------:|:--------------:|----------|
+| Inline Styles | Component | ❌ | ✅ Excellent | State/prop-driven styles |
+| External CSS | Global | ✅ | Limited | Shared, reusable styles |
+| CSS Modules | Local | ✅ | Limited | Component-scoped styles |
+| Conditional Classes | Global | ✅ | ✅ Good | Variant-based components |
 
 ---
 
 ## ⚠️ Best Practices & Common Mistakes
 
-### 🚫 Common Mistakes to Avoid
+### 🚫 Mistakes to Avoid
 
-#### 1. **Using `class` Instead of `className`** [web:16]
+```jsx
+// ❌ 1. class instead of className
+<div class="card">...</div>
+// ✅ Fix — class is a JS reserved keyword
+<div className="card">...</div>
 
-```javascript
-// ❌ WRONG
-<div class="container">Content</div>
+// ❌ 2. Unclosed self-closing tags
+<img src="photo.jpg">  <input type="text">
+// ✅ Fix
+<img src="photo.jpg" />  <input type="text" />
 
-// ✅ CORRECT
-<div className="container">Content</div>
+// ❌ 3. Multiple root elements
+return ( <h1>Title</h1> <p>Text</p> );
+// ✅ Fix — use fragment
+return ( <> <h1>Title</h1> <p>Text</p> </> );
+
+// ❌ 4. Rendering an object directly
+const user = { name: "Alice", age: 30 };
+return <div>{user}</div>;              // Error: Objects are not valid React children
+// ✅ Fix
+return <div>{user.name} — {user.age}</div>;
+
+// ❌ 5. Array index as key
+{items.map((item, i) => <Card key={i} {...item} />)}
+// ✅ Fix — use stable unique ID
+{items.map(item => <Card key={item.id} {...item} />)}
+
+// ❌ 6. Lowercase component name
+function movieCard() { return <div>...</div>; }   // Treated as HTML element!
+// ✅ Fix
+function MovieCard() { return <div>...</div>; }
+
+// ❌ 7. Non-string props as strings
+<Card age="25" isActive="true" score="9.8" />
+// ✅ Fix — use {} for non-strings
+<Card age={25} isActive={true} score={9.8} />
 ```
 
-#### 2. **Forgetting to Close Tags** [web:5]
+---
 
-```javascript
-// ❌ WRONG
-<img src="photo.jpg">
-<input type="text">
-
-// ✅ CORRECT
-<img src="photo.jpg" />
-<input type="text" />
-```
-
-#### 3. **Multiple Parent Elements** [web:5]
-
-```javascript
-// ❌ WRONG
-return (
-  <h1>Title</h1>
-  <p>Content</p>
-);
-
-// ✅ CORRECT
-return (
-  <>
-    <h1>Title</h1>
-    <p>Content</p>
-  </>
-);
-```
-
-#### 4. **Rendering Objects Directly** [web:19]
-
-```javascript
-const user = { name: 'Alice', age: 30 };
-
-// ❌ WRONG - Objects are not valid React children!
-<div>{user}</div>
-
-// ✅ CORRECT - Render specific properties
-<div>{user.name}</div>
-<div>{user.age}</div>
-```
-
-#### 5. **Using Index as Key in Lists** [web:19]
-
-```javascript
-// ❌ BAD - Can cause performance and rendering issues
-{items.map((item, index) => 
-  <div key={index}>{item}</div>
-)}
-
-// ✅ GOOD - Use unique identifier
-{items.map(item => 
-  <div key={item.id}>{item.name}</div>
-)}
-```
-
-#### 6. **Lowercase Component Names**
-
-```javascript
-// ❌ WRONG - React treats it as HTML tag
-function myComponent() {
-  return <div>Hello</div>;
-}
-
-// ✅ CORRECT - PascalCase for components
-function MyComponent() {
-  return <div>Hello</div>;
-}
-```
-
-#### 7. **Forgetting Curly Braces for Non-String Props**
-
-```javascript
-// ❌ WRONG
-<UserCard age="25" isActive="true" />
-
-// ✅ CORRECT
-<UserCard age={25} isActive={true} />
-```
-
-### 🎯 Do's and Don'ts Quick Reference
+### 🎯 Quick Reference — Do's & Don'ts
 
 | ✅ DO | ❌ DON'T |
 |-------|----------|
 | Use `className` | Use `class` |
-| Use PascalCase for components | Use lowercase for components |
-| Close all JSX tags | Leave tags unclosed |
-| Use unique keys in lists | Use array index as key |
-| Extract complex logic | Write everything inline |
-| Use functional components | Use class components (for new code) |
-| Destructure props | Access props.prop.prop.prop |
-| Keep components focused | Create giant components |
-| Use fragments `<>` | Add unnecessary divs |
-| Validate props | Assume props exist |
+| PascalCase for components | lowercase component names |
+| Close all JSX tags | Leave tags open |
+| Use `item.id` as list key | Use array index as key |
+| Destructure props | Chain `props.x.y.z` |
+| Use `<>` fragments | Add pointless `<div>` wrappers |
+| Functional components | Class components for new code |
+| Keep components small & focused | Build giant monolithic components |
+| Default prop values | Assume props are always provided |
+| Inline styles for dynamic values | Inline styles for everything |
 
 ---
 
-## 🎓 Learning Tips & Resources
+## 📝 Summary
 
-### 💡 Learning Tips
+| Concept | What It Is | Golden Rule |
+|---------|-----------|-------------|
+| **JSX** | HTML-like syntax inside JS | Compiles to `React.createElement()` via Babel |
+| **`{}`  Expressions** | Embed JS values in JSX | Expressions only — no `if`/`for` statements |
+| **Components** | JS functions that return JSX | PascalCase · One responsibility · Return JSX |
+| **Props** | Data passed parent → child | Read-only · One-way flow · Like function args |
+| **`children`** | Content between tags | For wrappers, layouts, and modal containers |
+| **`className`** | CSS class attribute in JSX | Never `class` — it is a JS reserved keyword |
+| **Styling** | 4 methods available | Inline=dynamic · CSS=global · Modules=scoped |
+| **Lists + Keys** | `.map()` + unique `key` | Stable ID as key · Never array index |
 
-1. **Type the Code Yourself** 
-   - Don't just copy-paste! Muscle memory matters.
+<br/>
 
-2. **Break Things on Purpose**
-   - Try removing a `className` → See the error
-   - Forget a closing tag → Understand why it fails
-   - Render an object directly → Learn the boundaries
+```
+🗺️  The Big Picture
 
-3. **Read Error Messages Carefully**
-   - React gives AMAZING error messages!
-   - They tell you exactly what's wrong and where
-
-4. **Build Mini Projects Daily**
-   - One concept = One mini project
-   - Example: Learned props? Build 5 different card components!
-
-5. **Use React DevTools**
-   - Install React Developer Tools browser extension
-   - Inspect your components in real-time
-
-### 📝 Today's Key Takeaways
-
-- **JSX** = HTML-like syntax in JavaScript
-- **Components** = Reusable UI building blocks
-- **Props** = Data passed from parent to child (one-way flow)
-- **Styling** = Multiple methods (inline, CSS, modules)
-- **Always** use `className`, not `class`
-- **Always** close JSX tags
-- **Always** use PascalCase for component names
-
-### 🚀 What's Next?
-
-After mastering Day 1, you'll be ready for:
-- **Day 2:** State Management & Events
-- **Day 3:** Hooks (useState, useEffect)
-- **Day 4:** Forms & Controlled Components
-- And much more!
-
----
-
-### 📌 Quick Reference Card
-
-```javascript
-// JSX Basics
-<div className="container">
-  <h1>{variable}</h1>
-  {condition && <p>Show if true</p>}
-  {condition ? <p>True</p> : <p>False</p>}
-</div>
-
-// Component
-function MyComponent({ prop1, prop2 }) {
-  return <div>{prop1} {prop2}</div>;
-}
-
-// Usage
-<MyComponent prop1="Hello" prop2={42} />
-
-// Styling
-const style = { color: 'blue', fontSize: '16px' };
-<div style={style} className="my-class">Styled</div>
-
-// Lists
-{items.map(item => <div key={item.id}>{item.name}</div>)}
+  [ Data / Props ]
+        │
+        ▼
+  [ Parent Component ]
+        │ props ⬇️
+        ▼
+  [ Child Components ]  →  JSX  →  Babel  →  React.createElement()  →  Virtual DOM  →  Screen ✅
 ```
 
----
+<div align="center">
 
 **Happy Coding! 💻✨**
 
-Remember: Practice > Perfection. Start building! 🚀
+*Small steps every day compound into mastery.* 🚀
 
 ---
 
 *Made with ❤️ for React learners*
+
+![React](https://img.shields.io/badge/Keep%20Building-React-61DAFB?style=flat-square&logo=react)
+![JS](https://img.shields.io/badge/Understand%20the-JS%20Roots-F7DF1E?style=flat-square&logo=javascript&logoColor=black)
+
+</div>
