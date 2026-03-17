@@ -1,12 +1,11 @@
-# 🚀 Day 3: Advanced Hooks & Side Effects
-
 <div align="center">
 
-![React Banner](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
-![Status](https://img.shields.io/badge/Status-Learning-yellow?style=for-the-badge)
-![Day](https://img.shields.io/badge/Day-3-blue?style=for-the-badge)
+# 🔄 Day 3: Advanced Hooks & Side Effects
 
-**Mastering the Dynamic Side of React** 🎯
+<img src="https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB" />
+<img src="https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black" />
+<img src="https://img.shields.io/badge/useEffect-Hook-61DAFB?style=for-the-badge&logo=react&logoColor=white" />
+<img src="https://img.shields.io/badge/Day-03-FF6B6B?style=for-the-badge" />
 
 </div>
 
@@ -14,369 +13,284 @@
 
 ## 📚 Table of Contents
 
-- [Introduction](#-introduction)
-- [1. useEffect Hook & Lifecycle](#-1-useeffect-hook--lifecycle)
-- [2. Data Fetching from APIs](#-2-data-fetching-from-apis)
-- [3. React Router Basics](#-3-react-router-basics)
-- [4. Custom Hooks Creation](#-4-custom-hooks-creation)
-- [5. Forms & Controlled Components](#-5-forms--controlled-components)
-- [Learning Resources](#-learning-resources)
-- [What's Next?](#-whats-next)
+| # | Topic |
+|---|-------|
+| 1 | [✅ Topics Covered](#-topics-covered) |
+| 2 | [💡 Real-Life Analogy](#-real-life-analogy) |
+| 3 | [🔄 useEffect Hook & Lifecycle](#-useeffect-hook--lifecycle) |
+| 4 | [🌐 Data Fetching from APIs](#-data-fetching-from-apis) |
+| 5 | [🗺️ React Router Basics](#%EF%B8%8F-react-router-basics) |
+| 6 | [🪝 Custom Hooks Creation](#-custom-hooks-creation) |
+| 7 | [📝 Forms & Controlled Components](#-forms--controlled-components) |
+| 8 | [⚠️ Best Practices & Common Mistakes](#%EF%B8%8F-best-practices--common-mistakes) |
+| 9 | [📝 Summary](#-summary) |
 
 ---
 
-## 🎯 Introduction
+## ✅ Topics Covered
 
-Welcome to **Day 3** of your React journey! Today, we're diving into the **dynamic side** of React - how components interact with the outside world, respond to changes, and manage complex behaviors. Think of today as learning how to make your React app "come alive" with real data, navigation, and sophisticated interactions.
-
-### What You'll Master Today:
-- 🔄 **Side Effects**: Making your components interact with the world beyond React
-- 🌐 **API Integration**: Fetching real data from external sources
-- 🧭 **Navigation**: Creating multi-page applications with routing
-- 🛠️ **Custom Hooks**: Building reusable logic for your applications
-- 📝 **Forms**: Handling user input the React way
+✅ `useEffect` hook and lifecycle
+✅ Data fetching from APIs
+✅ React Router basics (navigation, dynamic routes)
+✅ Custom hooks creation
+✅ Forms and controlled components
 
 ---
 
-## 🔄 1. useEffect Hook & Lifecycle
+## 💡 Real-Life Analogy
 
-### 🧠 What is useEffect?
+### 🤖 Personal Assistant Concept
 
-**Simple Definition**: `useEffect` is React's way of performing **side effects** in functional components. A side effect is any operation that reaches outside the component to do something - like fetching data, updating the DOM, setting up subscriptions, or timers.
+> `useEffect` is like a **personal assistant** that watches for specific changes and takes action automatically.
+> When you open your fridge (component **mounts**), the light turns on (effect **runs**).
+> When you close it (component **unmounts**), the light turns off (**cleanup** runs).
 
-### 🌍 Real-World Analogy
+```
+🏠 Fridge Analogy                      React useEffect
+──────────────────────────────────     ──────────────────────────────────────────
+  Open fridge   → light turns ON  →   Component mounts   → effect runs ✅
+  Inside fridge → light stays ON  →   Component updates  → re-runs if deps changed
+  Close fridge  → light turns OFF →   Component unmounts → cleanup runs 🧹
+```
 
-Think of `useEffect` like **setting up automatic tasks in your home**:
-- **When you move in** (component mounts): Turn on the electricity, set up internet
-- **When something changes** (component updates): Adjust the thermostat when temperature preferences change
-- **When you move out** (component unmounts): Cancel subscriptions, turn off utilities
+> 🧠 **Key Insight:** React renders UI — but sometimes you need to do things *outside* the render cycle: fetch data, set a timer, subscribe to an event. These are **side effects** — and `useEffect` is how React manages them safely.
 
-### 📖 Deep Theory
+---
 
-#### Understanding Side Effects
+## 🔄 useEffect Hook & Lifecycle
 
-In programming, a **pure function** only computes a result from its inputs without affecting anything outside. React components should be pure - given the same props/state, they return the same JSX.
+### 📖 Theory
 
-But real applications need to:
-- Fetch data from servers 🌐
-- Update document title 📄
-- Set up event listeners 🎧
-- Connect to WebSockets 🔌
-- Interact with browser APIs 🖥️
+Every React component goes through a **lifecycle**:
 
-These operations are **side effects** because they affect things outside the component's scope. `useEffect` is the designated place to handle them safely.
+```
+  1️⃣  MOUNT      → Component appears in the DOM for the first time
+  2️⃣  UPDATE     → State or props change → component re-renders
+  3️⃣  UNMOUNT    → Component is removed from the DOM
+```
 
-#### The Lifecycle Connection
+Before hooks, you needed a **class component** with `componentDidMount`, `componentDidUpdate`, and `componentWillUnmount` to handle these phases. `useEffect` replaces all three in a single, clean API.
 
-React components go through three phases:
-1. **Mounting**: Component is created and inserted into the DOM
-2. **Updating**: Component re-renders due to state/props changes
-3. **Unmounting**: Component is removed from the DOM
+---
 
-`useEffect` can hook into all these phases!
+### 🔬 Anatomy of useEffect
 
-### 💻 Syntax Breakdown
-
-```javascript
+```jsx
 useEffect(() => {
-  // Effect logic (runs after render)
+  // 1️⃣ EFFECT — runs after render
+  // Place your side effect code here
 
   return () => {
-    // Cleanup logic (runs before next effect or unmount)
+    // 2️⃣ CLEANUP — runs before the next effect OR before unmount
+    // Cancel subscriptions, clear timers, abort requests
   };
-}, [dependencies]); // Dependency array
+
+}, [dependencies]); // 3️⃣ DEPENDENCY ARRAY — controls when effect re-runs
 ```
 
-**Three Parts Explained**:
+---
 
-1. **Effect Function**: The code you want to run
-2. **Cleanup Function** (optional): Code to run before the next effect or when component unmounts
-3. **Dependency Array**: Controls when the effect runs
+### ⚙️ Dependency Array — The Control Panel
 
-### 🔍 Dependency Array Deep Dive
+The dependency array is the most important part of `useEffect`. It tells React **when** to re-run the effect:
 
-The dependency array is **crucial** - it tells React when to re-run your effect:
+| Dependency Array | When Effect Runs | Real-World Use Case |
+|:----------------:|-----------------|---------------------|
+| Not provided | After **every** render | Rarely used — almost always causes issues |
+| `[]` empty | **Once** on mount only | Fetch initial data, set up subscriptions |
+| `[value]` | Mount + when `value` changes | Re-fetch when a search query changes |
+| `[a, b]` | Mount + when `a` or `b` changes | Sync multiple state values |
 
-#### **No Dependency Array** (Runs Every Render)
-```javascript
-useEffect(() => {
-  console.log('Runs after EVERY render');
-});
-```
-⚠️ **Dangerous**: Can cause infinite loops!
+```jsx
+import { useState, useEffect } from "react";
 
-#### **Empty Dependency Array** (Runs Once)
-```javascript
-useEffect(() => {
-  console.log('Runs only once after initial mount');
-}, []);
-```
-✅ **Use for**: Data fetching on mount, subscriptions, one-time setups
+function DigitalClock() {
+  const [time, setTime] = useState(new Date());
 
-#### **With Dependencies** (Runs When Dependencies Change)
-```javascript
-useEffect(() => {
-  console.log('Runs when count changes');
-}, [count]);
-```
-✅ **Use for**: Syncing with specific state/props
-
-### 📝 Step-by-Step Examples
-
-#### Example 1: Document Title Updater
-```javascript
-import { useState, useEffect } from 'react';
-
-function PageTitle() {
-  const [count, setCount] = useState(0);
-
-  // Updates document title whenever count changes
   useEffect(() => {
-    document.title = \`You clicked \${count} times\`;
+    // Effect: start a timer when component mounts
+    const timer = setInterval(() => {
+      setTime(new Date());
+    }, 1000);
 
-    // No cleanup needed for this effect
-  }, [count]); // Only re-run when count changes
+    // Cleanup: stop the timer when component unmounts
+    // Without this → timer keeps running in background → memory leak! 💧
+    return () => clearInterval(timer);
+
+  }, []); // [] → run once on mount only
 
   return (
     <div>
-      <p>You clicked {count} times</p>
-      <button onClick={() => setCount(count + 1)}>
-        Click me
-      </button>
+      <h2>🕐 {time.toLocaleTimeString()}</h2>
+      <p>{time.toLocaleDateString("en-IN", { weekday: "long", month: "long", day: "numeric" })}</p>
     </div>
   );
 }
 ```
 
-**What Happens**:
-1. Component renders with count = 0
-2. After render, effect runs → sets title to "You clicked 0 times"
-3. User clicks button → count becomes 1
-4. Component re-renders with count = 1
-5. After render, effect runs again → sets title to "You clicked 1 times"
+**📌 What this shows:**
+- `[]` means the timer starts once when the component appears
+- The cleanup `clearInterval(timer)` prevents a memory leak
+- Without cleanup, the timer would keep running even after the component is gone
 
-#### Example 2: Timer with Cleanup
-```javascript
-function Timer() {
-  const [seconds, setSeconds] = useState(0);
+---
 
-  useEffect(() => {
-    console.log('Setting up timer...');
+### 📡 useEffect with Dependencies
 
-    // Set up the timer
-    const intervalId = setInterval(() => {
-      setSeconds(prev => prev + 1);
-    }, 1000);
-
-    // Cleanup function
-    return () => {
-      console.log('Cleaning up timer...');
-      clearInterval(intervalId); // Prevent memory leaks!
-    };
-  }, []); // Empty array = run once on mount
-
-  return <div>Seconds: {seconds}</div>;
-}
-```
-
-**Why Cleanup Matters**:
-- Without cleanup, timers keep running even after component unmounts
-- This causes **memory leaks** and unexpected behavior
-- Cleanup runs before next effect and on unmount
-
-#### Example 3: Fetching Data on Prop Change
-```javascript
-function UserProfile({ userId }) {
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
+```jsx
+function LiveSearch() {
+  const [query,   setQuery]   = useState("");
+  const [results, setResults] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    // Reset states when userId changes
+    // Don't fetch if query is empty
+    if (!query.trim()) {
+      setResults([]);
+      return;
+    }
+
     setLoading(true);
-    setUser(null);
 
-    // Fetch user data
-    fetch(\`https://api.example.com/users/\${userId}\`)
-      .then(response => response.json())
-      .then(data => {
-        setUser(data);
-        setLoading(false);
-      });
+    // Debounce — wait 500ms after user stops typing before fetching
+    const debounceTimer = setTimeout(() => {
+      fetch(`https://api.example.com/search?q=${query}`)
+        .then(res  => res.json())
+        .then(data => {
+          setResults(data.results);
+          setLoading(false);
+        });
+    }, 500);
 
-    // No cleanup needed unless we want to cancel the fetch
-  }, [userId]); // Re-run when userId changes
+    // Cleanup — cancel the debounce timer if user types again before 500ms
+    return () => clearTimeout(debounceTimer);
 
-  if (loading) return <div>Loading...</div>;
-  return <div>Hello, {user.name}!</div>;
+  }, [query]); // Re-runs every time query changes
+
+  return (
+    <div>
+      <input
+        value       = {query}
+        onChange    = {e => setQuery(e.target.value)}
+        placeholder = "🔍 Search..."
+      />
+      {loading && <p>Searching...</p>}
+      <ul>
+        {results.map(r => <li key={r.id}>{r.title}</li>)}
+      </ul>
+    </div>
+  );
 }
 ```
 
-### 🎨 Visual Flow Diagram
+---
 
-```
-Component Lifecycle with useEffect:
+### 🔁 Three useEffect Patterns Side by Side
 
-[Component Created]
-       ↓
-[Initial Render]
-       ↓
-[useEffect Runs] ← (componentDidMount equivalent)
-       ↓
-[User Interaction / Props Change]
-       ↓
-[State/Props Update]
-       ↓
-[Re-render]
-       ↓
-[Cleanup Function Runs] ← (from previous effect)
-       ↓
-[useEffect Runs Again] ← (componentDidUpdate equivalent)
-       ↓
-[Component Unmounts]
-       ↓
-[Final Cleanup Runs] ← (componentWillUnmount equivalent)
-```
-
-### ✅ Do's and ❌ Don'ts
-
-#### ✅ DO:
-- **Always include dependencies** in the dependency array
-- **Use cleanup functions** for subscriptions, timers, and event listeners
-- **Keep effects focused** - one effect per concern
-- **Use multiple useEffects** to separate different concerns
-- **Handle loading and error states** when fetching data
-
-#### ❌ DON'T:
-- **Don't omit dependencies** that are used inside the effect
-- **Don't mutate state directly** inside useEffect without setState
-- **Don't create infinite loops** (updating state that triggers the same effect)
-- **Don't forget cleanup** for subscriptions and timers
-- **Don't use useEffect for calculations** - use useMemo instead
-
-### 🚨 Common Mistakes
-
-#### Mistake 1: Missing Dependencies
-```javascript
-// ❌ BAD: count is used but not in dependencies
+```jsx
+// Pattern 1: Run ONCE on mount — like componentDidMount
 useEffect(() => {
-  console.log(count);
+  console.log("Component appeared!");
 }, []);
 
-// ✅ GOOD: Include all dependencies
+// Pattern 2: Run when specific value changes — like componentDidUpdate
 useEffect(() => {
-  console.log(count);
-}, [count]);
-```
+  console.log("userId changed to:", userId);
+  // fetch new user data here
+}, [userId]);
 
-#### Mistake 2: Infinite Loop
-```javascript
-// ❌ BAD: Updates state that triggers the effect
+// Pattern 3: Run + Cleanup — subscriptions, timers, event listeners
 useEffect(() => {
-  setCount(count + 1);
-}, [count]); // Creates infinite loop!
-
-// ✅ GOOD: Use proper dependencies
-useEffect(() => {
-  // Only run once or with specific trigger
-  setCount(0);
-}, []); // Empty array prevents loop
-```
-
-### 💡 Pro Tips
-
-1. **Use ESLint Plugin**: Install `eslint-plugin-react-hooks` to catch dependency issues
-2. **Separate Concerns**: Multiple useEffects are better than one complex one
-3. **Think Declaratively**: Describe what should happen, not imperatively controlling when
-4. **Async Handling**: Can't make useEffect itself async, but can use async functions inside
-
-```javascript
-// ✅ Correct way to use async in useEffect
-useEffect(() => {
-  const fetchData = async () => {
-    const result = await fetch('/api/data');
-    const data = await result.json();
-    setData(data);
-  };
-
-  fetchData();
+  window.addEventListener("resize", handleResize);
+  return () => window.removeEventListener("resize", handleResize);
 }, []);
 ```
 
 ---
 
-## 🌐 2. Data Fetching from APIs
+## 🌐 Data Fetching from APIs
 
-### 🧠 What is Data Fetching?
+### 📖 Theory
 
-**Simple Definition**: Data fetching is the process of requesting information from external sources (APIs, databases) and displaying it in your React application. It's how your app gets dynamic, real-time data.
+Fetching data is one of the most common side effects in React apps. Since `fetch()` is **asynchronous**, it doesn't return the data immediately — it returns a **Promise**. We use `useEffect` to start the fetch after the component renders, then store the response in state to trigger a re-render with the data.
 
-### 🌍 Real-World Analogy
+```
+Component renders (empty state)
+         │
+         ▼
+  useEffect runs → fetch() called
+         │
+         ▼
+  Promise resolves → setData(result)
+         │
+         ▼
+  Component re-renders with real data ✅
+```
 
-Think of data fetching like **ordering food from a restaurant**:
-- **You place an order** (make API request) 📱
-- **Wait for preparation** (loading state) ⏳
-- **Receive your food** (data arrives) 🍕
-- **Or get notified of issues** (error handling) ❌
+---
 
-### 📖 Deep Theory
+### 🌐 Complete Fetch Pattern
 
-#### Understanding APIs
+```jsx
+import { useState, useEffect } from "react";
 
-**API (Application Programming Interface)** is a way for different software to communicate. In web development, we typically use **REST APIs** that:
-- Use HTTP methods (GET, POST, PUT, DELETE)
-- Return data in JSON format
-- Have specific endpoints (URLs) for different data
-
-#### The Fetch Cycle
-
-When fetching data in React:
-1. **Component mounts** → Initiate fetch
-2. **Loading state** → Show user something is happening
-3. **Data arrives** → Update state with data
-4. **Component re-renders** → Display the data
-5. **Handle errors** → Show user-friendly error messages
-
-### 💻 Fetching Methods in React
-
-#### Method 1: Using Fetch API (Native)
-```javascript
-import { useState, useEffect } from 'react';
-
-function UserList() {
-  const [users, setUsers] = useState([]);
+function GitHubProfile({ username }) {
+  const [user,    setUser]    = useState(null);
+  const [repos,   setRepos]   = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [error,   setError]   = useState(null);
 
   useEffect(() => {
-    // Using native fetch
-    fetch('https://jsonplaceholder.typicode.com/users')
-      .then(response => {
-        // Check if request was successful
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-        return response.json();
+    setLoading(true);
+    setError(null);
+
+    // Using AbortController to cancel fetch if component unmounts mid-request
+    const controller = new AbortController();
+
+    fetch(`https://api.github.com/users/${username}`, { signal: controller.signal })
+      .then(res => {
+        if (!res.ok) throw new Error(`User not found (${res.status})`);
+        return res.json();
       })
       .then(data => {
-        setUsers(data);
+        setUser(data);
+        return fetch(`https://api.github.com/users/${username}/repos`, { signal: controller.signal });
+      })
+      .then(res  => res.json())
+      .then(data => {
+        setRepos(data.slice(0, 5));  // show top 5 repos
         setLoading(false);
       })
-      .catch(error => {
-        setError(error.message);
-        setLoading(false);
+      .catch(err => {
+        if (err.name !== "AbortError") {
+          setError(err.message);
+          setLoading(false);
+        }
       });
-  }, []); // Empty array = fetch once on mount
 
-  // Render based on state
-  if (loading) return <div>Loading users...</div>;
-  if (error) return <div>Error: {error}</div>;
+    return () => controller.abort();  // cleanup — cancel on unmount
+
+  }, [username]); // re-fetch if username prop changes
+
+  if (loading) return <p>⏳ Loading profile...</p>;
+  if (error)   return <p>❌ Error: {error}</p>;
+  if (!user)   return null;
 
   return (
-    <div>
-      <h2>User List</h2>
+    <div className="profile">
+      <img src={user.avatar_url} alt={user.login} width={80} style={{ borderRadius: "50%" }} />
+      <h2>{user.name || user.login}</h2>
+      <p>👥 {user.followers} followers · 📦 {user.public_repos} repos</p>
+      <p>{user.bio}</p>
+
+      <h4>Top Repositories:</h4>
       <ul>
-        {users.map(user => (
-          <li key={user.id}>{user.name}</li>
+        {repos.map(repo => (
+          <li key={repo.id}>
+            <a href={repo.html_url} target="_blank" rel="noreferrer">
+              ⭐ {repo.stargazers_count} — {repo.name}
+            </a>
+          </li>
         ))}
       </ul>
     </div>
@@ -384,1679 +298,648 @@ function UserList() {
 }
 ```
 
-#### Method 2: Using Async/Await (Cleaner)
-```javascript
-function Posts() {
-  const [posts, setPosts] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+**📌 Always handle these 3 states when fetching:**
+- `loading: true` → show a spinner / skeleton
+- `error: message` → show a friendly error message
+- `data: result` → show the actual content
 
-  useEffect(() => {
-    // Create async function inside useEffect
-    const fetchPosts = async () => {
-      try {
-        setLoading(true);
+---
 
-        const response = await fetch(
-          'https://jsonplaceholder.typicode.com/posts'
-        );
+### ⚡ async/await Style
 
-        if (!response.ok) {
-          throw new Error(\`HTTP error! status: \${response.status}\`);
-        }
+```jsx
+useEffect(() => {
+  // ⚠️ useEffect callback cannot be async directly
+  // Define an inner async function and call it
 
-        const data = await response.json();
-        setPosts(data);
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false); // Always runs, even if error
-      }
-    };
+  const fetchData = async () => {
+    try {
+      setLoading(true);
+      const res  = await fetch(`https://api.example.com/posts`);
+      if (!res.ok) throw new Error("Failed to fetch");
+      const data = await res.json();
+      setData(data);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    fetchPosts();
-  }, []);
+  fetchData();
+}, []);
+```
 
-  if (loading) return <div>⏳ Loading posts...</div>;
-  if (error) return <div>❌ Error: {error}</div>;
+> ⚠️ **Why not `async` directly on the callback?**
+> `useEffect(() => async () => {...})` would return a Promise, not a cleanup function — React doesn't know what to do with a Promise as cleanup. Always wrap in an inner `async` function.
 
+---
+
+## 🗺️ React Router Basics
+
+### 📖 Theory
+
+React is a **Single Page Application (SPA)** framework — the browser loads one HTML file and JavaScript handles all navigation. React Router intercepts URL changes and renders the matching component **without reloading the page**.
+
+```
+Traditional Website (Multi-Page)        React SPA (Single-Page)
+──────────────────────────────────      ───────────────────────────────────
+  /home    → browser fetches home.html  /home    → React renders <Home />
+  /about   → browser fetches about.html /about   → React renders <About />
+  /contact → browser fetches contact   /contact → React renders <Contact />
+  (Full page reload each time ❌)        (Instant, no reload ✅)
+```
+
+---
+
+### 🗺️ Setup & Basic Routing
+
+```jsx
+import { BrowserRouter, Routes, Route, Link, NavLink } from "react-router-dom";
+
+// Pages
+const Home     = () => <h1>🏠 Welcome Home</h1>;
+const About    = () => <h1>👤 About Us</h1>;
+const NotFound = () => <h1>❌ 404 — Page Not Found</h1>;
+
+// Main App
+function App() {
+  return (
+    <BrowserRouter>
+      {/* Navigation — Link prevents full page reload */}
+      <nav>
+        <NavLink to="/"      style={({ isActive }) => ({ fontWeight: isActive ? "bold" : "normal" })}>
+          Home
+        </NavLink>
+        <NavLink to="/about" style={({ isActive }) => ({ fontWeight: isActive ? "bold" : "normal" })}>
+          About
+        </NavLink>
+      </nav>
+
+      {/* Route definitions */}
+      <Routes>
+        <Route path="/"       element={<Home />}     />
+        <Route path="/about"  element={<About />}    />
+        <Route path="*"       element={<NotFound />} />  {/* catch-all */}
+      </Routes>
+    </BrowserRouter>
+  );
+}
+```
+
+---
+
+### 🔗 Dynamic Routes & useParams
+
+Dynamic routes use `:paramName` as a placeholder in the path. The actual value is read inside the component using the `useParams` hook:
+
+```jsx
+import { Routes, Route, Link, useParams, useNavigate } from "react-router-dom";
+
+const movies = [
+  { id: 1, title: "Inception",       year: 2010, director: "Christopher Nolan", rating: 9.3 },
+  { id: 2, title: "Interstellar",    year: 2014, director: "Christopher Nolan", rating: 8.7 },
+  { id: 3, title: "The Dark Knight", year: 2008, director: "Christopher Nolan", rating: 9.0 },
+];
+
+// List page — shows all movies
+function MovieList() {
   return (
     <div>
-      <h2>Posts</h2>
-      {posts.map(post => (
-        <article key={post.id}>
-          <h3>{post.title}</h3>
-          <p>{post.body}</p>
-        </article>
+      <h2>🎬 Movies</h2>
+      {movies.map(m => (
+        <div key={m.id}>
+          <Link to={`/movies/${m.id}`}>{m.title}</Link>
+        </div>
       ))}
     </div>
   );
 }
-```
 
-#### Method 3: Using Axios (Popular Library)
-```javascript
-import axios from 'axios';
+// Detail page — shows one movie based on :id in URL
+function MovieDetail() {
+  const { id }     = useParams();       // reads :id from /movies/:id
+  const navigate   = useNavigate();     // programmatic navigation
+  const movie      = movies.find(m => m.id === Number(id));
 
-function Comments() {
-  const [comments, setComments] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
-  useEffect(() => {
-    const fetchComments = async () => {
-      try {
-        setLoading(true);
-
-        // Axios automatically parses JSON and throws errors
-        const response = await axios.get(
-          'https://jsonplaceholder.typicode.com/comments'
-        );
-
-        setComments(response.data); // Axios puts data in .data
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchComments();
-  }, []);
-
-  // ... render logic
-}
-```
-
-### 🔍 Advanced Patterns
-
-#### Pattern 1: Canceling Requests (Avoiding Memory Leaks)
-```javascript
-function SearchResults({ query }) {
-  const [results, setResults] = useState([]);
-
-  useEffect(() => {
-    const controller = new AbortController();
-
-    const fetchResults = async () => {
-      try {
-        const response = await fetch(
-          \`https://api.example.com/search?q=\${query}\`,
-          { signal: controller.signal } // Pass abort signal
-        );
-
-        const data = await response.json();
-        setResults(data);
-      } catch (err) {
-        if (err.name === 'AbortError') {
-          console.log('Fetch aborted');
-        } else {
-          console.error('Fetch error:', err);
-        }
-      }
-    };
-
-    if (query) {
-      fetchResults();
-    }
-
-    // Cleanup: abort fetch if component unmounts or query changes
-    return () => controller.abort();
-  }, [query]);
-
-  // ... render logic
-}
-```
-
-**Why This Matters**: If user types fast and changes the query, old requests are canceled, preventing race conditions and memory leaks.
-
-#### Pattern 2: Pagination
-```javascript
-function PaginatedList() {
-  const [items, setItems] = useState([]);
-  const [page, setPage] = useState(1);
-  const [loading, setLoading] = useState(false);
-  const [hasMore, setHasMore] = useState(true);
-
-  useEffect(() => {
-    const fetchPage = async () => {
-      setLoading(true);
-
-      const response = await fetch(
-        \`https://api.example.com/items?page=\${page}&limit=10\`
-      );
-
-      const data = await response.json();
-
-      setItems(prev => [...prev, ...data.items]); // Append new items
-      setHasMore(data.hasMore);
-      setLoading(false);
-    };
-
-    fetchPage();
-  }, [page]); // Re-fetch when page changes
+  if (!movie) return <p>Movie not found. <button onClick={() => navigate("/movies")}>Go Back</button></p>;
 
   return (
     <div>
-      {items.map(item => <div key={item.id}>{item.name}</div>)}
-
-      {hasMore && (
-        <button onClick={() => setPage(p => p + 1)} disabled={loading}>
-          {loading ? 'Loading...' : 'Load More'}
-        </button>
-      )}
+      <button onClick={() => navigate(-1)}>← Back</button>   {/* browser history back */}
+      <h2>{movie.title} ({movie.year})</h2>
+      <p>🎬 Director: {movie.director}</p>
+      <p>⭐ Rating: {movie.rating}/10</p>
     </div>
   );
 }
-```
 
-#### Pattern 3: Dependent Fetches
-```javascript
-function UserPosts({ userId }) {
-  const [user, setUser] = useState(null);
-  const [posts, setPosts] = useState([]);
-
-  // First: Fetch user
-  useEffect(() => {
-    const fetchUser = async () => {
-      const response = await fetch(\`/api/users/\${userId}\`);
-      const data = await response.json();
-      setUser(data);
-    };
-
-    fetchUser();
-  }, [userId]);
-
-  // Second: Fetch posts only after user is loaded
-  useEffect(() => {
-    if (!user) return; // Don't fetch if user not loaded
-
-    const fetchPosts = async () => {
-      const response = await fetch(\`/api/users/\${user.id}/posts\`);
-      const data = await response.json();
-      setPosts(data);
-    };
-
-    fetchPosts();
-  }, [user]); // Depend on user
-
-  // ... render logic
+// Routing setup
+function App() {
+  return (
+    <Routes>
+      <Route path="/movies"     element={<MovieList />}   />
+      <Route path="/movies/:id" element={<MovieDetail />} />
+    </Routes>
+  );
 }
 ```
-
-### ✅ Do's and ❌ Don'ts
-
-#### ✅ DO:
-- **Always handle loading states** - show spinners/skeletons
-- **Always handle errors** - display user-friendly messages
-- **Use try-catch blocks** with async/await
-- **Cancel requests** on cleanup to prevent memory leaks
-- **Validate data** before using it
-- **Use environment variables** for API endpoints
-
-#### ❌ DON'T:
-- **Don't fetch without error handling**
-- **Don't forget loading indicators**
-- **Don't expose API keys** in client-side code
-- **Don't fetch on every render** - use proper dependencies
-- **Don't trust API data blindly** - validate and sanitize
-
-### 🚨 Common Mistakes
-
-#### Mistake 1: Not Handling Loading State
-```javascript
-// ❌ BAD: No loading state
-function BadComponent() {
-  const [data, setData] = useState([]);
-
-  useEffect(() => {
-    fetch('/api/data')
-      .then(r => r.json())
-      .then(setData);
-  }, []);
-
-  return data.map(item => <div>{item.name}</div>); // Will be empty initially
-}
-
-// ✅ GOOD: Proper loading state
-function GoodComponent() {
-  const [data, setData] = useState([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    fetch('/api/data')
-      .then(r => r.json())
-      .then(data => {
-        setData(data);
-        setLoading(false);
-      });
-  }, []);
-
-  if (loading) return <div>Loading...</div>;
-  return data.map(item => <div key={item.id}>{item.name}</div>);
-}
-```
-
-### 💡 Pro Tips
-
-1. **Use Loading Skeletons**: Better UX than spinners
-2. **Debounce Search Queries**: Don't fetch on every keystroke
-3. **Cache Responses**: Store fetched data to avoid redundant requests
-4. **Use React Query/SWR**: Libraries that handle caching, revalidation, etc.
-5. **Error Retry Logic**: Allow users to retry failed requests
 
 ---
 
-## 🧭 3. React Router Basics
+### 🔒 Nested Routes
 
-### 🧠 What is React Router?
-
-**Simple Definition**: React Router is a library that enables **navigation** between different views/pages in a React application without reloading the entire page. It creates a **Single Page Application (SPA)** experience.
-
-### 🌍 Real-World Analogy
-
-Think of React Router like **rooms in a house**:
-- Your house (app) has multiple rooms (pages) 🏠
-- You can move between rooms (navigate) without leaving the house 🚪
-- Each room has its own purpose (different content) 🛋️
-- You always know which room you're in (current URL) 📍
-
-### 📖 Deep Theory
-
-#### Understanding Single Page Applications (SPAs)
-
-Traditional websites:
-- Click link → Browser requests new HTML → Full page reload → New page displays
-
-SPAs with React Router:
-- Click link → JavaScript changes view → Only component updates → URL changes (no reload)
-
-**Benefits**:
-- ⚡ Faster navigation (no full page reloads)
-- 🎨 Smoother transitions and animations
-- 💾 Maintains application state
-- 📱 Better mobile experience
-
-#### How React Router Works
-
-React Router uses the browser's **History API** to:
-1. **Update URL** without page reload
-2. **Listen to URL changes**
-3. **Render appropriate components** based on URL
-
-### 💻 Installation & Setup
-
-```bash
-# Install React Router
-npm install react-router-dom
-```
-
-### 📝 Step-by-Step Basic Setup
-
-#### Step 1: Wrap App with BrowserRouter
-```javascript
-// main.jsx or index.js
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import { BrowserRouter } from 'react-router-dom';
-import App from './App';
-
-ReactDOM.createRoot(document.getElementById('root')).render(
-  <React.StrictMode>
-    <BrowserRouter>
-      <App />
-    </BrowserRouter>
-  </React.StrictMode>
-);
-```
-
-**What BrowserRouter Does**: Provides routing context to all components in the app.
-
-#### Step 2: Define Routes
-```javascript
-// App.jsx
-import { Routes, Route, Link } from 'react-router-dom';
-import Home from './pages/Home';
-import About from './pages/About';
-import Contact from './pages/Contact';
-
-function App() {
+```jsx
+// Nested routes share a common layout
+function Dashboard() {
   return (
     <div>
-      {/* Navigation Bar */}
+      <h2>📊 Dashboard</h2>
       <nav>
-        <Link to="/">Home</Link>
-        <Link to="/about">About</Link>
-        <Link to="/contact">Contact</Link>
+        <Link to="overview">Overview</Link> |
+        <Link to="stats">Stats</Link>
       </nav>
-
-      {/* Route Definitions */}
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/about" element={<About />} />
-        <Route path="/contact" element={<Contact />} />
-      </Routes>
+      <Outlet />   {/* renders the active child route here */}
     </div>
   );
 }
 
-export default App;
+<Routes>
+  <Route path="/dashboard" element={<Dashboard />}>
+    <Route index         element={<Overview />} />   {/* /dashboard */}
+    <Route path="stats"  element={<Stats />}   />   {/* /dashboard/stats */}
+  </Route>
+</Routes>
 ```
-
-**Key Components**:
-- **\`<Routes>\`**: Container for all route definitions
-- **\`<Route>\`**: Defines a path and what component to render
-- **\`<Link>\`**: Creates navigational links (replaces \`<a>\`)
-
-#### Step 3: Create Page Components
-```javascript
-// pages/Home.jsx
-function Home() {
-  return (
-    <div>
-      <h1>Home Page</h1>
-      <p>Welcome to our website!</p>
-    </div>
-  );
-}
-
-export default Home;
-
-// pages/About.jsx
-function About() {
-  return (
-    <div>
-      <h1>About Us</h1>
-      <p>Learn more about our company.</p>
-    </div>
-  );
-}
-
-export default About;
-```
-
-### 🔍 Advanced Routing Concepts
-
-#### 1. Dynamic Routes (URL Parameters)
-```javascript
-import { Routes, Route, useParams } from 'react-router-dom';
-
-function App() {
-  return (
-    <Routes>
-      <Route path="/users/:userId" element={<UserProfile />} />
-      <Route path="/products/:productId" element={<ProductDetail />} />
-    </Routes>
-  );
-}
-
-// Using the parameter
-function UserProfile() {
-  const { userId } = useParams(); // Extract :userId from URL
-
-  return <div>Viewing profile for user: {userId}</div>;
-}
-
-// Example: /users/123 → userId will be "123"
-```
-
-**Real Example with Data Fetching**:
-```javascript
-function ProductDetail() {
-  const { productId } = useParams();
-  const [product, setProduct] = useState(null);
-
-  useEffect(() => {
-    fetch(\`https://api.example.com/products/\${productId}\`)
-      .then(r => r.json())
-      .then(setProduct);
-  }, [productId]); // Re-fetch when productId changes
-
-  if (!product) return <div>Loading...</div>;
-
-  return (
-    <div>
-      <h1>{product.name}</h1>
-      <p>{product.description}</p>
-      <p>Price: ${product.price}</p>
-    </div>
-  );
-}
-```
-
-#### 2. Nested Routes
-```javascript
-import { Routes, Route, Outlet, Link } from 'react-router-dom';
-
-function App() {
-  return (
-    <Routes>
-      <Route path="/dashboard" element={<DashboardLayout />}>
-        <Route index element={<DashboardHome />} /> {/* /dashboard */}
-        <Route path="profile" element={<Profile />} /> {/* /dashboard/profile */}
-        <Route path="settings" element={<Settings />} /> {/* /dashboard/settings */}
-      </Route>
-    </Routes>
-  );
-}
-
-// Layout component with nested routes
-function DashboardLayout() {
-  return (
-    <div>
-      <h1>Dashboard</h1>
-      <nav>
-        <Link to="/dashboard">Home</Link>
-        <Link to="/dashboard/profile">Profile</Link>
-        <Link to="/dashboard/settings">Settings</Link>
-      </nav>
-
-      {/* Outlet renders the matched child route */}
-      <Outlet />
-    </div>
-  );
-}
-```
-
-**\`<Outlet>\` Explained**: It's a placeholder where child routes will be rendered. Think of it as a "slot" for nested content.
-
-#### 3. Programmatic Navigation
-```javascript
-import { useNavigate } from 'react-router-dom';
-
-function LoginForm() {
-  const navigate = useNavigate();
-
-  const handleLogin = async (e) => {
-    e.preventDefault();
-
-    // Perform login logic
-    const success = await loginUser();
-
-    if (success) {
-      // Navigate programmatically after successful login
-      navigate('/dashboard');
-
-      // Or go back
-      // navigate(-1);
-
-      // Or replace current history entry (can't go back)
-      // navigate('/dashboard', { replace: true });
-    }
-  };
-
-  return (
-    <form onSubmit={handleLogin}>
-      {/* form fields */}
-      <button type="submit">Login</button>
-    </form>
-  );
-}
-```
-
-#### 4. 404 Not Found Page
-```javascript
-function App() {
-  return (
-    <Routes>
-      <Route path="/" element={<Home />} />
-      <Route path="/about" element={<About />} />
-
-      {/* Catch-all route for 404 */}
-      <Route path="*" element={<NotFound />} />
-    </Routes>
-  );
-}
-
-function NotFound() {
-  return (
-    <div>
-      <h1>404 - Page Not Found</h1>
-      <Link to="/">Go back home</Link>
-    </div>
-  );
-}
-```
-
-#### 5. Protected Routes (Authentication)
-```javascript
-import { Navigate } from 'react-router-dom';
-
-// Protected Route wrapper component
-function ProtectedRoute({ children }) {
-  const isAuthenticated = checkAuth(); // Your auth logic
-
-  if (!isAuthenticated) {
-    return <Navigate to="/login" replace />;
-  }
-
-  return children;
-}
-
-// Usage
-function App() {
-  return (
-    <Routes>
-      <Route path="/login" element={<Login />} />
-
-      <Route 
-        path="/dashboard" 
-        element={
-          <ProtectedRoute>
-            <Dashboard />
-          </ProtectedRoute>
-        } 
-      />
-    </Routes>
-  );
-}
-```
-
-### 🎨 Navigation Patterns
-
-#### Active Link Styling
-```javascript
-import { NavLink } from 'react-router-dom';
-
-function Navigation() {
-  return (
-    <nav>
-      <NavLink 
-        to="/" 
-        className={({ isActive }) => isActive ? "active" : ""}
-      >
-        Home
-      </NavLink>
-
-      <NavLink 
-        to="/about"
-        style={({ isActive }) => ({
-          color: isActive ? 'red' : 'black'
-        })}
-      >
-        About
-      </NavLink>
-    </nav>
-  );
-}
-```
-
-**NavLink vs Link**: \`NavLink\` knows when it's active and can apply special styling.
-
-### ✅ Do's and ❌ Don'ts
-
-#### ✅ DO:
-- **Use \`<Link>\` instead of \`<a>\`** for internal navigation
-- **Use \`useParams()\`** to access URL parameters
-- **Use \`useNavigate()\`** for programmatic navigation
-- **Create a 404 page** with catch-all route
-- **Use nested routes** for layouts
-- **Protect sensitive routes** with authentication checks
-
-#### ❌ DON'T:
-- **Don't use \`<a>\` tags** for internal links (causes full reload)
-- **Don't forget to wrap app** in \`<BrowserRouter>\`
-- **Don't nest \`<Routes>\`** improperly without \`<Outlet>\`
-- **Don't hardcode URLs** - use route constants
-- **Don't forget the \`*\` catch-all** for 404s
-
-### 💡 Pro Tips
-
-1. **Route Organization**: Keep routes in a separate config file for large apps
-2. **Lazy Loading**: Use React.lazy() to code-split routes
-3. **Query Parameters**: Use \`useSearchParams()\` for query strings
-4. **Location State**: Pass data between routes using \`navigate('/path', { state: data })\`
 
 ---
 
-## 🛠️ 4. Custom Hooks Creation
+### 🗺️ React Router Hooks — Quick Reference
 
-### 🧠 What are Custom Hooks?
+| Hook | Purpose | Example |
+|------|---------|---------|
+| `useParams` | Read URL parameters | `const { id } = useParams()` |
+| `useNavigate` | Programmatic navigation | `navigate("/home")` or `navigate(-1)` |
+| `useLocation` | Read current URL info | `const { pathname } = useLocation()` |
+| `useSearchParams` | Read/write query strings | `?search=react` |
 
-**Simple Definition**: Custom hooks are **JavaScript functions** that use React hooks (like useState, useEffect) to encapsulate and **reuse stateful logic** across multiple components. They let you extract component logic into reusable functions.
+---
 
-### 🌍 Real-World Analogy
+## 🪝 Custom Hooks Creation
 
-Think of custom hooks like **power tools**:
-- **Built-in hooks** (useState, useEffect) are basic tools like hammers and screwdrivers 🔨
-- **Custom hooks** are specialized power tools you build for specific tasks 🔧
-- You combine basic tools to create something more powerful and reusable 💪
-- Once built, you can use them anywhere in your workshop 🏗️
+### 📖 Theory
 
-### 📖 Deep Theory
+A **custom hook** is a JavaScript function whose name starts with `use` that calls other hooks internally. It lets you **extract reusable stateful logic** out of components — so the same logic doesn't get copy-pasted across your app.
 
-#### Why Custom Hooks?
-
-**Problem**: Multiple components need the same logic (fetching data, form handling, window size detection)
-
-**Old Solution**: Higher-Order Components (HOCs) or Render Props → Complex and hard to understand
-
-**React Hooks Solution**: Extract logic into custom hooks → Simple, reusable, composable
-
-#### Rules for Custom Hooks
-
-1. **Name must start with "use"** (e.g., useFetch, useForm, useAuth)
-2. **Can call other hooks** inside them
-3. **Must be called at the top level** (same rules as built-in hooks)
-4. **Can return anything** (values, functions, objects, arrays)
-
-### 💻 Creating Custom Hooks - Step by Step
-
-#### Example 1: useToggle (Simple Hook)
-
-**Purpose**: Reusable toggle functionality
-
-```javascript
-import { useState } from 'react';
-
-// Custom Hook Definition
-function useToggle(initialValue = false) {
-  const [value, setValue] = useState(initialValue);
-
-  const toggle = () => setValue(prev => !prev);
-  const setTrue = () => setValue(true);
-  const setFalse = () => setValue(false);
-
-  return [value, { toggle, setTrue, setFalse }];
-}
-
-// Usage in components
-function Modal() {
-  const [isOpen, { toggle, setFalse }] = useToggle(false);
-
-  return (
-    <div>
-      <button onClick={toggle}>Toggle Modal</button>
-
-      {isOpen && (
-        <div className="modal">
-          <p>Modal Content</p>
-          <button onClick={setFalse}>Close</button>
-        </div>
-      )}
-    </div>
-  );
-}
-
-function Sidebar() {
-  const [isCollapsed, { toggle }] = useToggle(true);
-
-  return (
-    <aside className={isCollapsed ? 'collapsed' : 'expanded'}>
-      <button onClick={toggle}>Toggle Sidebar</button>
-    </aside>
-  );
-}
+```
+Without Custom Hooks                    With Custom Hooks
+──────────────────────────────────      ────────────────────────────────
+  ComponentA                            function useFetch(url) {
+    useState(null)  ← duplicated          useState, useEffect, error...
+    useEffect(fetch)← duplicated          return { data, loading, error }
+    loading, error  ← duplicated        }
+  ComponentB
+    useState(null)  ← same code again   ComponentA → useFetch("/api/users")
+    useEffect(fetch)← same code again   ComponentB → useFetch("/api/posts")
+    loading, error  ← same code again   ComponentC → useFetch("/api/movies")
+                                        (DRY ✅ — logic lives in one place)
 ```
 
-**Benefits**: No need to rewrite toggle logic in every component!
+> 🔑 **Rule:** If a function name starts with `use` and calls hooks inside → it's a custom hook. React's linter enforces hook rules on it automatically.
 
-#### Example 2: useFetch (Data Fetching Hook)
+---
 
-**Purpose**: Reusable data fetching with loading and error states
+### 🪝 Custom Hook 1 — useFetch
 
-```javascript
-import { useState, useEffect } from 'react';
+```jsx
+import { useState, useEffect } from "react";
 
+// Reusable data-fetching hook
 function useFetch(url) {
-  const [data, setData] = useState(null);
+  const [data,    setData]    = useState(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [error,   setError]   = useState(null);
 
   useEffect(() => {
-    // Reset states when URL changes
+    if (!url) return;
+
     setLoading(true);
     setError(null);
 
-    const fetchData = async () => {
-      try {
-        const response = await fetch(url);
+    const controller = new AbortController();
 
-        if (!response.ok) {
-          throw new Error(\`HTTP error! status: \${response.status}\`);
-        }
+    fetch(url, { signal: controller.signal })
+      .then(res  => { if (!res.ok) throw new Error(`HTTP ${res.status}`); return res.json(); })
+      .then(data => { setData(data);         setLoading(false); })
+      .catch(err => { if (err.name !== "AbortError") { setError(err.message); setLoading(false); } });
 
-        const result = await response.json();
-        setData(result);
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-  }, [url]); // Re-fetch when URL changes
+    return () => controller.abort();
+  }, [url]);
 
   return { data, loading, error };
 }
 
-// Usage
-function UserList() {
-  const { data: users, loading, error } = useFetch(
-    'https://jsonplaceholder.typicode.com/users'
-  );
+// Usage — any component, any URL
+function PostList() {
+  const { data: posts, loading, error } = useFetch("https://jsonplaceholder.typicode.com/posts?_limit=5");
 
-  if (loading) return <div>Loading...</div>;
-  if (error) return <div>Error: {error}</div>;
+  if (loading) return <p>⏳ Loading posts...</p>;
+  if (error)   return <p>❌ {error}</p>;
 
   return (
     <ul>
-      {users.map(user => (
-        <li key={user.id}>{user.name}</li>
-      ))}
+      {posts?.map(post => <li key={post.id}><strong>{post.title}</strong></li>)}
     </ul>
-  );
-}
-
-function Posts() {
-  const { data: posts, loading, error } = useFetch(
-    'https://jsonplaceholder.typicode.com/posts'
-  );
-
-  // Same pattern, different data!
-  if (loading) return <div>Loading...</div>;
-  if (error) return <div>Error: {error}</div>;
-
-  return (
-    <div>
-      {posts.map(post => (
-        <article key={post.id}>
-          <h3>{post.title}</h3>
-        </article>
-      ))}
-    </div>
   );
 }
 ```
 
-#### Example 3: useLocalStorage (Persistent State)
+---
 
-**Purpose**: Sync state with localStorage
+### 🪝 Custom Hook 2 — useLocalStorage
 
-```javascript
-import { useState, useEffect } from 'react';
+```jsx
+import { useState } from "react";
 
+// Syncs state with localStorage automatically
 function useLocalStorage(key, initialValue) {
-  // Get initial value from localStorage or use provided initial value
   const [value, setValue] = useState(() => {
     try {
-      const item = window.localStorage.getItem(key);
-      return item ? JSON.parse(item) : initialValue;
-    } catch (error) {
-      console.error(error);
+      const stored = localStorage.getItem(key);
+      return stored ? JSON.parse(stored) : initialValue;
+    } catch {
       return initialValue;
     }
   });
 
-  // Update localStorage whenever value changes
-  useEffect(() => {
-    try {
-      window.localStorage.setItem(key, JSON.stringify(value));
-    } catch (error) {
-      console.error(error);
-    }
-  }, [key, value]);
+  const setStoredValue = (newValue) => {
+    setValue(newValue);
+    localStorage.setItem(key, JSON.stringify(newValue));
+  };
 
-  return [value, setValue];
+  return [value, setStoredValue];
 }
 
-// Usage
-function ThemeSwitcher() {
-  const [theme, setTheme] = useLocalStorage('theme', 'light');
+// Usage — persists across page refreshes!
+function Settings() {
+  const [theme,    setTheme]    = useLocalStorage("theme",    "light");
+  const [fontSize, setFontSize] = useLocalStorage("fontSize", 16);
 
   return (
-    <div className={theme}>
-      <button onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}>
-        Toggle Theme
-      </button>
-      <p>Current theme: {theme}</p>
+    <div>
+      <h2>⚙️ Settings</h2>
+      <label>
+        Theme:
+        <select value={theme} onChange={e => setTheme(e.target.value)}>
+          <option value="light">☀️ Light</option>
+          <option value="dark">🌙 Dark</option>
+        </select>
+      </label>
+      <label>
+        Font Size: {fontSize}px
+        <input type="range" min="12" max="24" value={fontSize} onChange={e => setFontSize(Number(e.target.value))} />
+      </label>
+      <p style={{ fontSize: `${fontSize}px` }}>Preview text at {fontSize}px</p>
     </div>
   );
 }
-
-// Theme persists across page reloads!
 ```
 
-#### Example 4: useDebounce (Performance Optimization)
+---
 
-**Purpose**: Delay state updates to reduce unnecessary operations
+### 🪝 Custom Hook 3 — useDebounce
 
-```javascript
-import { useState, useEffect } from 'react';
+```jsx
+import { useState, useEffect } from "react";
 
+// Delays updating a value until user stops typing
 function useDebounce(value, delay = 500) {
   const [debouncedValue, setDebouncedValue] = useState(value);
 
   useEffect(() => {
-    // Set up timeout to update debounced value
-    const timeoutId = setTimeout(() => {
-      setDebouncedValue(value);
-    }, delay);
-
-    // Cleanup: clear timeout if value changes before delay
-    return () => clearTimeout(timeoutId);
+    const timer = setTimeout(() => setDebouncedValue(value), delay);
+    return () => clearTimeout(timer);   // reset timer on every value change
   }, [value, delay]);
 
   return debouncedValue;
 }
 
-// Usage: Search that only fires after user stops typing
-function SearchBar() {
-  const [searchTerm, setSearchTerm] = useState('');
-  const debouncedSearchTerm = useDebounce(searchTerm, 500);
-  const [results, setResults] = useState([]);
-
-  // Only search when debounced value changes
-  useEffect(() => {
-    if (debouncedSearchTerm) {
-      fetch(\`/api/search?q=\${debouncedSearchTerm}\`)
-        .then(r => r.json())
-        .then(setResults);
-    }
-  }, [debouncedSearchTerm]); // Triggers less frequently!
+// Usage — API only called after user stops typing for 500ms
+function SearchPage() {
+  const [query,         setQuery]   = useState("");
+  const debouncedQuery              = useDebounce(query, 500);
+  const { data, loading }           = useFetch(
+    debouncedQuery ? `https://api.example.com/search?q=${debouncedQuery}` : null
+  );
 
   return (
     <div>
-      <input 
-        type="text"
-        value={searchTerm}
-        onChange={(e) => setSearchTerm(e.target.value)}
-        placeholder="Search..."
+      <input
+        value       = {query}
+        onChange    = {e => setQuery(e.target.value)}
+        placeholder = "🔍 Search... (waits 500ms)"
       />
-
-      {/* Results */}
-      {results.map(result => (
-        <div key={result.id}>{result.name}</div>
-      ))}
+      {loading && <p>Searching for "{debouncedQuery}"...</p>}
     </div>
   );
 }
 ```
-
-### 🔍 Advanced Custom Hooks
-
-#### Example 5: useForm (Form Handling)
-
-```javascript
-import { useState } from 'react';
-
-function useForm(initialValues) {
-  const [values, setValues] = useState(initialValues);
-  const [errors, setErrors] = useState({});
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setValues(prev => ({
-      ...prev,
-      [name]: value
-    }));
-  };
-
-  const handleSubmit = (callback, validate) => (e) => {
-    e.preventDefault();
-
-    // Validate if validation function provided
-    if (validate) {
-      const validationErrors = validate(values);
-      setErrors(validationErrors);
-
-      // Only call callback if no errors
-      if (Object.keys(validationErrors).length === 0) {
-        callback(values);
-      }
-    } else {
-      callback(values);
-    }
-  };
-
-  const reset = () => {
-    setValues(initialValues);
-    setErrors({});
-  };
-
-  return {
-    values,
-    errors,
-    handleChange,
-    handleSubmit,
-    reset
-  };
-}
-
-// Usage
-function RegistrationForm() {
-  const validate = (values) => {
-    const errors = {};
-
-    if (!values.email) {
-      errors.email = 'Email is required';
-    } else if (!/\S+@\S+\.\S+/.test(values.email)) {
-      errors.email = 'Email is invalid';
-    }
-
-    if (!values.password || values.password.length < 6) {
-      errors.password = 'Password must be at least 6 characters';
-    }
-
-    return errors;
-  };
-
-  const { values, errors, handleChange, handleSubmit, reset } = useForm({
-    email: '',
-    password: ''
-  });
-
-  const onSubmit = (formValues) => {
-    console.log('Form submitted:', formValues);
-    // API call here
-    reset();
-  };
-
-  return (
-    <form onSubmit={handleSubmit(onSubmit, validate)}>
-      <div>
-        <input
-          type="email"
-          name="email"
-          value={values.email}
-          onChange={handleChange}
-          placeholder="Email"
-        />
-        {errors.email && <span>{errors.email}</span>}
-      </div>
-
-      <div>
-        <input
-          type="password"
-          name="password"
-          value={values.password}
-          onChange={handleChange}
-          placeholder="Password"
-        />
-        {errors.password && <span>{errors.password}</span>}
-      </div>
-
-      <button type="submit">Register</button>
-      <button type="button" onClick={reset}>Reset</button>
-    </form>
-  );
-}
-```
-
-### ✅ Do's and ❌ Don'ts
-
-#### ✅ DO:
-- **Name with "use" prefix** - React depends on this convention
-- **Extract reusable logic** - DRY principle
-- **Keep hooks focused** - one responsibility per hook
-- **Return consistent values** - same return structure always
-- **Document your hooks** - add JSDoc comments
-- **Test custom hooks** - use @testing-library/react-hooks
-
-#### ❌ DON'T:
-- **Don't call hooks conditionally** inside custom hooks
-- **Don't make hooks too complex** - break into smaller hooks
-- **Don't mix unrelated logic** in one hook
-- **Don't forget dependencies** in useEffect inside custom hooks
-- **Don't return too many values** - use objects for clarity
-
-### 💡 Pro Tips
-
-1. **Composability**: Custom hooks can use other custom hooks
-2. **TypeScript**: Add types for better developer experience
-3. **Testing**: Test hooks in isolation with renderHook()
-4. **Organization**: Create a \`hooks/\` folder for all custom hooks
-5. **Share**: Publish useful hooks as npm packages
 
 ---
 
-## 📝 5. Forms & Controlled Components
+## 📝 Forms & Controlled Components
 
-### 🧠 What are Controlled Components?
+### 📖 Theory
 
-**Simple Definition**: A controlled component is a form element whose value is **controlled by React state**. React becomes the "single source of truth" for the form data.
+A **controlled component** is an input whose value is driven entirely by React state. React is the **single source of truth** — the DOM just displays what React tells it to.
 
-### 🌍 Real-World Analogy
-
-Think of controlled components like a **puppet master**:
-- **Uncontrolled**: The puppet moves on its own (DOM controls the value) 🎭
-- **Controlled**: You control every movement with strings (React state controls the value) 🎪
-
-Or like a **thermostat**:
-- You set the temperature (React state) → Thermostat displays it
-- You change it → State updates → Display updates
-- Always in sync! 🌡️
-
-### 📖 Deep Theory
-
-#### Controlled vs Uncontrolled
-
-**Uncontrolled Components**:
-```javascript
-// DOM manages the value
-function UncontrolledForm() {
-  const inputRef = useRef();
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log(inputRef.current.value); // Get value from DOM
-  };
-
-  return (
-    <form onSubmit={handleSubmit}>
-      <input type="text" ref={inputRef} />
-      <button>Submit</button>
-    </form>
-  );
-}
+```
+Uncontrolled Component          Controlled Component
+───────────────────────────     ─────────────────────────────────
+  DOM owns the value              React state owns the value
+  You read it with a ref          You read it from state
+  React doesn't know it changed   React knows on every keystroke
+  Hard to validate in real-time   Easy to validate instantly ✅
 ```
 
-**Controlled Components**:
-```javascript
-// React state manages the value
-function ControlledForm() {
-  const [value, setValue] = useState('');
+---
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log(value); // Value from state
-  };
+### 📝 Complete Controlled Form
 
-  return (
-    <form onSubmit={handleSubmit}>
-      <input 
-        type="text" 
-        value={value} 
-        onChange={(e) => setValue(e.target.value)} 
-      />
-      <button>Submit</button>
-    </form>
-  );
-}
-```
+```jsx
+import { useState } from "react";
 
-**Why Controlled is Better**:
-- ✅ Single source of truth (React state)
-- ✅ Easy validation
-- ✅ Conditional rendering based on input
-- ✅ Instant feedback
-- ✅ Better for complex forms
+const INITIAL_FORM = {
+  fullName   : "",
+  email      : "",
+  password   : "",
+  role       : "developer",
+  agreeToTOS : false,
+};
 
-### 💻 Form Elements
-
-#### 1. Text Input
-```javascript
-function TextInputExample() {
-  const [name, setName] = useState('');
-
-  return (
-    <div>
-      <label>
-        Name:
-        <input 
-          type="text"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          placeholder="Enter your name"
-        />
-      </label>
-      <p>Hello, {name}!</p>
-    </div>
-  );
-}
-```
-
-#### 2. Textarea
-```javascript
-function TextareaExample() {
-  const [message, setMessage] = useState('');
-
-  return (
-    <div>
-      <label>
-        Message:
-        <textarea 
-          value={message}
-          onChange={(e) => setMessage(e.target.value)}
-          placeholder="Enter your message"
-          rows={4}
-        />
-      </label>
-      <p>Character count: {message.length}</p>
-    </div>
-  );
-}
-```
-
-#### 3. Select Dropdown
-```javascript
-function SelectExample() {
-  const [country, setCountry] = useState('');
-
-  return (
-    <div>
-      <label>
-        Country:
-        <select 
-          value={country}
-          onChange={(e) => setCountry(e.target.value)}
-        >
-          <option value="">Select a country</option>
-          <option value="us">United States</option>
-          <option value="uk">United Kingdom</option>
-          <option value="ca">Canada</option>
-        </select>
-      </label>
-      <p>Selected: {country}</p>
-    </div>
-  );
-}
-```
-
-#### 4. Checkbox
-```javascript
-function CheckboxExample() {
-  const [agreed, setAgreed] = useState(false);
-
-  return (
-    <div>
-      <label>
-        <input 
-          type="checkbox"
-          checked={agreed}
-          onChange={(e) => setAgreed(e.target.checked)}
-        />
-        I agree to terms and conditions
-      </label>
-
-      <button disabled={!agreed}>Submit</button>
-    </div>
-  );
-}
-```
-
-#### 5. Radio Buttons
-```javascript
-function RadioExample() {
-  const [plan, setPlan] = useState('');
-
-  return (
-    <div>
-      <p>Choose a plan:</p>
-
-      <label>
-        <input 
-          type="radio"
-          value="free"
-          checked={plan === 'free'}
-          onChange={(e) => setPlan(e.target.value)}
-        />
-        Free
-      </label>
-
-      <label>
-        <input 
-          type="radio"
-          value="pro"
-          checked={plan === 'pro'}
-          onChange={(e) => setPlan(e.target.value)}
-        />
-        Pro
-      </label>
-
-      <p>Selected plan: {plan}</p>
-    </div>
-  );
-}
-```
-
-### 🔍 Handling Multiple Inputs
-
-#### Pattern: Single Handler for Multiple Inputs
-```javascript
-function MultiInputForm() {
-  const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
-    email: '',
-    age: '',
-    country: ''
-  });
-
-  // Generic handler for all inputs
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-
-    setFormData(prev => ({
-      ...prev,
-      [name]: value // Dynamic key based on input name
-    }));
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log('Form data:', formData);
-  };
-
-  return (
-    <form onSubmit={handleSubmit}>
-      <input 
-        type="text"
-        name="firstName"
-        value={formData.firstName}
-        onChange={handleChange}
-        placeholder="First Name"
-      />
-
-      <input 
-        type="text"
-        name="lastName"
-        value={formData.lastName}
-        onChange={handleChange}
-        placeholder="Last Name"
-      />
-
-      <input 
-        type="email"
-        name="email"
-        value={formData.email}
-        onChange={handleChange}
-        placeholder="Email"
-      />
-
-      <input 
-        type="number"
-        name="age"
-        value={formData.age}
-        onChange={handleChange}
-        placeholder="Age"
-      />
-
-      <select 
-        name="country"
-        value={formData.country}
-        onChange={handleChange}
-      >
-        <option value="">Select Country</option>
-        <option value="us">USA</option>
-        <option value="uk">UK</option>
-      </select>
-
-      <button type="submit">Submit</button>
-    </form>
-  );
-}
-```
-
-### 🎯 Form Validation
-
-#### Client-Side Validation
-```javascript
-function ValidatedForm() {
-  const [formData, setFormData] = useState({
-    username: '',
-    email: '',
-    password: ''
-  });
-
+function RegistrationForm() {
+  const [form,   setForm]   = useState(INITIAL_FORM);
   const [errors, setErrors] = useState({});
-  const [touched, setTouched] = useState({});
+  const [submitted, setSubmitted] = useState(false);
 
+  // Generic handler — works for text, email, select
+  const handleChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    setForm(prev => ({
+      ...prev,
+      [name]: type === "checkbox" ? checked : value
+    }));
+    // Clear error when user starts fixing a field
+    if (errors[name]) setErrors(prev => ({ ...prev, [name]: "" }));
+  };
+
+  // Validation
   const validate = () => {
     const newErrors = {};
-
-    // Username validation
-    if (!formData.username) {
-      newErrors.username = 'Username is required';
-    } else if (formData.username.length < 3) {
-      newErrors.username = 'Username must be at least 3 characters';
-    }
-
-    // Email validation
-    if (!formData.email) {
-      newErrors.email = 'Email is required';
-    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = 'Email is invalid';
-    }
-
-    // Password validation
-    if (!formData.password) {
-      newErrors.password = 'Password is required';
-    } else if (formData.password.length < 8) {
-      newErrors.password = 'Password must be at least 8 characters';
-    } else if (!/(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])/.test(formData.password)) {
-      newErrors.password = 'Password must contain uppercase, lowercase, and number';
-    }
-
+    if (!form.fullName.trim())      newErrors.fullName  = "Name is required";
+    if (!/\S+@\S+\.\S+/.test(form.email)) newErrors.email = "Enter a valid email";
+    if (form.password.length < 8)   newErrors.password  = "Minimum 8 characters";
+    if (!form.agreeToTOS)           newErrors.agreeToTOS = "You must agree to continue";
     return newErrors;
   };
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const validationErrors = validate();
 
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
-
-    // Validate on change if field was touched
-    if (touched[name]) {
-      const validationErrors = validate();
+    if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
+      return;
     }
+
+    console.log("✅ Form submitted:", form);
+    setSubmitted(true);
+    setForm(INITIAL_FORM);
   };
 
-  const handleBlur = (e) => {
-    const { name } = e.target;
-
-    setTouched(prev => ({
-      ...prev,
-      [name]: true
-    }));
-
-    // Validate on blur
-    const validationErrors = validate();
-    setErrors(validationErrors);
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-
-    // Mark all fields as touched
-    setTouched({
-      username: true,
-      email: true,
-      password: true
-    });
-
-    const validationErrors = validate();
-    setErrors(validationErrors);
-
-    // Submit only if no errors
-    if (Object.keys(validationErrors).length === 0) {
-      console.log('Form is valid, submitting:', formData);
-      // API call here
-    }
-  };
+  if (submitted) return <p style={{ color: "green" }}>🎉 Registration successful!</p>;
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={handleSubmit} noValidate>
+      <h2>📋 Register</h2>
+
+      {/* Text input */}
       <div>
-        <label>Username:</label>
-        <input 
-          type="text"
-          name="username"
-          value={formData.username}
-          onChange={handleChange}
-          onBlur={handleBlur}
+        <label>Full Name</label>
+        <input
+          name        = "fullName"
+          value       = {form.fullName}
+          onChange    = {handleChange}
+          placeholder = "Madhvendra Singh"
         />
-        {touched.username && errors.username && (
-          <span style={{color: 'red'}}>{errors.username}</span>
-        )}
+        {errors.fullName && <span style={{ color: "red" }}>⚠️ {errors.fullName}</span>}
       </div>
 
+      {/* Email input */}
       <div>
-        <label>Email:</label>
-        <input 
-          type="email"
-          name="email"
-          value={formData.email}
-          onChange={handleChange}
-          onBlur={handleBlur}
+        <label>Email</label>
+        <input
+          name        = "email"
+          type        = "email"
+          value       = {form.email}
+          onChange    = {handleChange}
+          placeholder = "you@example.com"
         />
-        {touched.email && errors.email && (
-          <span style={{color: 'red'}}>{errors.email}</span>
-        )}
+        {errors.email && <span style={{ color: "red" }}>⚠️ {errors.email}</span>}
       </div>
 
+      {/* Password input */}
       <div>
-        <label>Password:</label>
-        <input 
-          type="password"
-          name="password"
-          value={formData.password}
-          onChange={handleChange}
-          onBlur={handleBlur}
+        <label>Password</label>
+        <input
+          name        = "password"
+          type        = "password"
+          value       = {form.password}
+          onChange    = {handleChange}
+          placeholder = "Min. 8 characters"
         />
-        {touched.password && errors.password && (
-          <span style={{color: 'red'}}>{errors.password}</span>
-        )}
+        {errors.password && <span style={{ color: "red" }}>⚠️ {errors.password}</span>}
       </div>
 
-      <button type="submit">Register</button>
+      {/* Select dropdown */}
+      <div>
+        <label>Role</label>
+        <select name="role" value={form.role} onChange={handleChange}>
+          <option value="developer">👨‍💻 Developer</option>
+          <option value="designer">🎨 Designer</option>
+          <option value="manager">📊 Manager</option>
+        </select>
+      </div>
+
+      {/* Checkbox */}
+      <div>
+        <label>
+          <input
+            name     = "agreeToTOS"
+            type     = "checkbox"
+            checked  = {form.agreeToTOS}
+            onChange = {handleChange}
+          />
+          I agree to the Terms of Service
+        </label>
+        {errors.agreeToTOS && <span style={{ color: "red" }}>⚠️ {errors.agreeToTOS}</span>}
+      </div>
+
+      <button type="submit">🚀 Create Account</button>
+      <button type="button" onClick={() => setForm(INITIAL_FORM)}>🔄 Reset</button>
     </form>
   );
 }
 ```
 
-### 🚀 Advanced Form Patterns
+**📌 Key points:**
+- One `handleChange` handles **all** field types using `e.target.name`
+- `type === "checkbox"` uses `checked` instead of `value`
+- `[name]: value` — computed property key dynamically targets the right field
+- Validation runs on submit; errors clear when the user fixes each field
 
-#### 1. File Upload
-```javascript
-function FileUploadForm() {
-  const [file, setFile] = useState(null);
-  const [preview, setPreview] = useState(null);
+---
 
-  const handleFileChange = (e) => {
-    const selectedFile = e.target.files[0];
+## ⚠️ Best Practices & Common Mistakes
 
-    if (selectedFile) {
-      setFile(selectedFile);
+### 🚫 Mistakes to Avoid
 
-      // Create preview for images
-      if (selectedFile.type.startsWith('image/')) {
-        const reader = new FileReader();
-        reader.onloadend = () => {
-          setPreview(reader.result);
-        };
-        reader.readAsDataURL(selectedFile);
-      }
-    }
-  };
+```jsx
+// ❌ 1. Missing dependency in array → stale data / wrong behavior
+useEffect(() => {
+  fetchUser(userId);   // uses userId but it's not listed!
+}, []);               // Bug: won't re-fetch when userId changes
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+// ✅ Fix
+useEffect(() => {
+  fetchUser(userId);
+}, [userId]);          // Re-fetches when userId changes
 
-    if (!file) return;
 
-    // Upload file
-    const formData = new FormData();
-    formData.append('file', file);
+// ❌ 2. Making the useEffect callback async directly
+useEffect(async () => {       // Returns a Promise — React expects void or cleanup!
+  const data = await fetch(url);
+}, []);
 
-    try {
-      const response = await fetch('/api/upload', {
-        method: 'POST',
-        body: formData
-      });
+// ✅ Fix — wrap in inner async function
+useEffect(() => {
+  const load = async () => { const data = await fetch(url); };
+  load();
+}, []);
 
-      const data = await response.json();
-      console.log('Upload successful:', data);
-    } catch (error) {
-      console.error('Upload failed:', error);
-    }
-  };
 
-  return (
-    <form onSubmit={handleSubmit}>
-      <input 
-        type="file"
-        onChange={handleFileChange}
-        accept="image/*"
-      />
+// ❌ 3. Not cleaning up — memory leak
+useEffect(() => {
+  const timer = setInterval(() => doSomething(), 1000);
+  // No return → timer runs forever after component unmounts!
+}, []);
 
-      {preview && <img src={preview} alt="Preview" width="200" />}
+// ✅ Fix — always return cleanup for subscriptions and timers
+useEffect(() => {
+  const timer = setInterval(() => doSomething(), 1000);
+  return () => clearInterval(timer);
+}, []);
 
-      <button type="submit" disabled={!file}>Upload</button>
-    </form>
-  );
-}
+
+// ❌ 4. Setting state unconditionally in useEffect — infinite loop
+useEffect(() => {
+  setCount(count + 1);   // state update → re-render → effect runs → update → ...💥
+}, [count]);
+
+// ✅ Fix — add a condition or restructure the logic
+useEffect(() => {
+  if (count < 5) setCount(count + 1);
+}, [count]);
+
+
+// ❌ 5. Using <a> tag instead of <Link> in React Router
+<a href="/about">About</a>    // Causes full page reload — loses all React state!
+
+// ✅ Fix
+<Link to="/about">About</Link>
+
+
+// ❌ 6. Forgetting to handle loading & error states
+const { data } = useFetch("/api/user");
+return <h1>{data.name}</h1>;   // Crashes if data is null on first render!
+
+// ✅ Fix
+if (loading) return <p>Loading...</p>;
+if (error)   return <p>Error!</p>;
+return <h1>{data.name}</h1>;
 ```
 
-#### 2. Multi-Step Form
-```javascript
-function MultiStepForm() {
-  const [step, setStep] = useState(1);
-  const [formData, setFormData] = useState({
-    // Step 1
-    name: '',
-    email: '',
-    // Step 2
-    address: '',
-    city: '',
-    // Step 3
-    cardNumber: '',
-    expiry: ''
-  });
+---
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
-  };
+### ✅ Do's & Don'ts — Quick Reference
 
-  const nextStep = () => setStep(step + 1);
-  const prevStep = () => setStep(step - 1);
+| ✅ DO | ❌ DON'T |
+|-------|----------|
+| List all used variables in dependency array | Omit dependencies — causes stale closures |
+| Return cleanup from subscriptions & timers | Leave timers/listeners running after unmount |
+| Use `AbortController` to cancel fetch | Let stale responses overwrite newer ones |
+| Always handle loading & error states | Assume fetch always succeeds instantly |
+| Use `<Link>` for navigation | Use `<a href>` — causes full page reload |
+| Wrap async logic in inner function | Make `useEffect` callback `async` directly |
+| Start custom hook names with `use` | Name hooks without `use` prefix |
+| Keep custom hooks single-purpose | Put all logic into one giant custom hook |
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log('Final form data:', formData);
-  };
+---
 
-  return (
-    <form onSubmit={handleSubmit}>
-      {step === 1 && (
-        <div>
-          <h2>Step 1: Personal Info</h2>
-          <input 
-            name="name"
-            value={formData.name}
-            onChange={handleChange}
-            placeholder="Name"
-          />
-          <input 
-            name="email"
-            value={formData.email}
-            onChange={handleChange}
-            placeholder="Email"
-          />
-          <button type="button" onClick={nextStep}>Next</button>
-        </div>
-      )}
+## 📝 Summary
 
-      {step === 2 && (
-        <div>
-          <h2>Step 2: Address</h2>
-          <input 
-            name="address"
-            value={formData.address}
-            onChange={handleChange}
-            placeholder="Address"
-          />
-          <input 
-            name="city"
-            value={formData.city}
-            onChange={handleChange}
-            placeholder="City"
-          />
-          <button type="button" onClick={prevStep}>Back</button>
-          <button type="button" onClick={nextStep}>Next</button>
-        </div>
-      )}
+| Concept | What It Is | Golden Rule |
+|---------|-----------|-------------|
+| **`useEffect`** | Runs side effects after render | Always clean up subscriptions & timers |
+| **Dependency array** | Controls when effect re-runs | `[]` = once · `[val]` = on change · none = always |
+| **Data fetching** | API calls inside `useEffect` | Handle loading, error, and data states |
+| **`AbortController`** | Cancels in-flight fetch | Always abort on component unmount |
+| **React Router** | Client-side navigation | Use `<Link>` not `<a>` — no page reload |
+| **`useParams`** | Read dynamic URL segments | `const { id } = useParams()` |
+| **`useNavigate`** | Programmatic redirect | `navigate("/path")` or `navigate(-1)` |
+| **Custom hooks** | Reusable stateful logic | Name must start with `use` |
+| **Controlled form** | React owns every input value | `value={state}` + `onChange={handler}` |
+| **Form validation** | Check fields before submit | Validate on submit, clear errors on fix |
 
-      {step === 3 && (
-        <div>
-          <h2>Step 3: Payment</h2>
-          <input 
-            name="cardNumber"
-            value={formData.cardNumber}
-            onChange={handleChange}
-            placeholder="Card Number"
-          />
-          <input 
-            name="expiry"
-            value={formData.expiry}
-            onChange={handleChange}
-            placeholder="Expiry"
-          />
-          <button type="button" onClick={prevStep}>Back</button>
-          <button type="submit">Submit</button>
-        </div>
-      )}
-    </form>
-  );
-}
+<br/>
+
+```
+🗺️  Day 3 Mental Model
+
+  Component Mounts
+        │
+        ▼
+  useEffect runs ──▶ fetch() / timer / subscription starts
+        │
+        ▼
+  Data arrives ──▶ setState() ──▶ Re-render with data ✅
+        │
+        ▼ (when deps change)
+  Cleanup runs ──▶ previous effect cancelled 🧹
+  New effect runs ──▶ fresh fetch / subscription ✅
+        │
+        ▼ (component unmounts)
+  Final cleanup runs ──▶ no memory leaks 💧✅
 ```
 
-### ✅ Do's and ❌ Don'ts
+<br/>
 
-#### ✅ DO:
-- **Use controlled components** for most forms
-- **Validate on blur** for better UX
-- **Show errors conditionally** (only if field is touched)
-- **Prevent default form submission** with e.preventDefault()
-- **Disable submit button** during submission
-- **Provide instant feedback** when possible
-- **Use proper input types** (email, number, tel, etc.)
+> 🚀 **Up Next — Day 4:**
+> `Context API` · `useReducer` · `React.memo` · `useMemo` · `useCallback` · Lazy Loading
 
-#### ❌ DON'T:
-- **Don't validate on every keystroke** (use onBlur or debounce)
-- **Don't forget to handle edge cases** (empty strings, special characters)
-- **Don't store sensitive data** in plain state
-- **Don't trust client-side validation alone** - always validate on server
-- **Don't make forms too long** - break into steps if needed
-
-### 💡 Pro Tips
-
-1. **Form Libraries**: Consider Formik, React Hook Form for complex forms
-2. **Accessibility**: Use proper labels, ARIA attributes, and keyboard navigation
-3. **Auto-save**: Save form progress to localStorage
-4. **Loading States**: Show spinner during submission
-5. **Success Feedback**: Clear form or show success message after submission
-
----
-
-## 🎓 Learning Resources
-
-### 📺 Video Tutorials
-- [React useEffect Hook - Complete Guide](https://www.youtube.com)
-- [React Router 6 Tutorial](https://www.youtube.com)
-- [Custom Hooks Explained](https://www.youtube.com)
-
-### 📖 Documentation
-- [React useEffect Documentation](https://react.dev/reference/react/useEffect)
-- [React Router Documentation](https://reactrouter.com)
-- [Forms in React](https://react.dev/learn/reacting-to-input-with-state)
-
-### 🛠️ Practice Resources
-- [JSONPlaceholder](https://jsonplaceholder.typicode.com) - Free fake API for testing
-- [React Challenges](https://github.com/alexgurr/react-coding-challenges)
-
----
-
-## 🚀 What's Next?
-
-### Day 4 Preview: State Management & Context API
-- Understanding prop drilling problems
-- Context API for global state
-- useReducer for complex state logic
-- Performance optimization techniques
-
----
+<br/>
 
 <div align="center">
 
-## 💪 Keep Building! You're Making Amazing Progress! 🎉
+**Happy Coding! 💻✨**
 
-**Remember**: The best way to learn is by **building**. Try creating a project that combines all these concepts!
-
-### Project Ideas:
-1. 📝 Todo App with API persistence
-2. 🛍️ E-commerce product catalog with routing
-3. 📰 News reader with API fetching
-4. 📊 Dashboard with custom hooks
+*Side effects managed cleanly = React apps that scale.* 🚀
 
 ---
 
-Made with ❤️ by a React Learner | [Day 1](../Day-1) | [Day 2](../Day-2) | **Day 3** | [Day 4](../Day-4)
+*Made with ❤️ for React learners*
+
+![React](https://img.shields.io/badge/Keep%20Building-React-61DAFB?style=flat-square&logo=react)
+![JS](https://img.shields.io/badge/Understand%20the-JS%20Roots-F7DF1E?style=flat-square&logo=javascript&logoColor=black)
 
 </div>
