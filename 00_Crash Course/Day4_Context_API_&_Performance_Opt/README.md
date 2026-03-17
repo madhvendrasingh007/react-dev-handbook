@@ -1,2204 +1,860 @@
-# 🚀 Day 4: Context API & Performance Optimization
+<div align="center">
 
-![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
-![Learning](https://img.shields.io/badge/Learning-Path-brightgreen?style=for-the-badge)
-![Advanced](https://img.shields.io/badge/Level-Intermediate-orange?style=for-the-badge)
+# 🎨 Day 4: Context API & Performance Optimization
 
-Welcome to **Day 4** of your React learning journey! 🎉 Today, we're diving deep into two crucial aspects of React development: managing global state with the Context API and optimizing your application's performance. Get ready to level up your React skills! 💪
+<img src="https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB" />
+<img src="https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black" />
+<img src="https://img.shields.io/badge/Context_API-Hook-61DAFB?style=for-the-badge&logo=react&logoColor=white" />
+<img src="https://img.shields.io/badge/Day-04-FF6B6B?style=for-the-badge" />
+
+</div>
 
 ---
 
 ## 📚 Table of Contents
 
-- [Context API & useContext Hook](#-context-api--usecontext-hook)
-- [useReducer for Complex State](#-usereducer-for-complex-state)
-- [React.memo and useMemo](#-reactmemo-and-usememo)
-- [useCallback Hook](#-usecallback-hook)
-- [Lazy Loading & Code Splitting](#-lazy-loading--code-splitting)
-- [Error Boundaries](#-error-boundaries)
-- [Best Practices & Common Mistakes](#-best-practices--common-mistakes)
-- [Learning Tips](#-learning-tips)
+| # | Topic |
+|---|-------|
+| 1 | [✅ Topics Covered](#-topics-covered) |
+| 2 | [💡 Real-Life Analogy](#-real-life-analogy) |
+| 3 | [📡 Context API & useContext](#-context-api--usecontext) |
+| 4 | [🔁 useReducer for Complex State](#-usereducer-for-complex-state) |
+| 5 | [⚡ React.memo & useMemo](#-reactmemo--usememo) |
+| 6 | [🔒 useCallback Hook](#-usecallback-hook) |
+| 7 | [✂️ Lazy Loading & Code Splitting](#%EF%B8%8F-lazy-loading--code-splitting) |
+| 8 | [🛡️ Error Boundaries](#%EF%B8%8F-error-boundaries) |
+| 9 | [⚠️ Best Practices & Common Mistakes](#%EF%B8%8F-best-practices--common-mistakes) |
+| 10 | [📝 Summary](#-summary) |
 
 ---
 
-## 🌍 Context API & useContext Hook
+## ✅ Topics Covered
 
-### 🎯 What is Context API?
+✅ Context API and `useContext` hook
+✅ `useReducer` for complex state
+✅ `React.memo` and `useMemo`
+✅ `useCallback` hook
+✅ Lazy loading and code splitting
+✅ Error boundaries
 
-The **Context API** is React's built-in solution for passing data through the component tree without having to pass props manually at every level. Think of it as a "global state" that components can access directly.
+---
 
-### 🏠 Real-World Analogy
+## 💡 Real-Life Analogy
 
-Imagine you're in a large office building:
+### 📡 Radio Broadcast Tower — Context API
 
-- **Without Context**: You need to deliver a message from the CEO (top floor) to an intern (ground floor). You have to pass the message through every manager, supervisor, and team lead on every floor—even if they don't need the message!
-
-- **With Context**: The CEO uses the building's PA system. Everyone who needs to hear the message can tune in directly, without involving unnecessary intermediaries.
-
-### 🧠 Deep Dive: How Context Works
-
-Context consists of three main parts:
-
-1. **Context Object**: Created using `React.createContext()`
-2. **Provider**: Supplies the data to the component tree
-3. **Consumer**: Components that access the data (using `useContext` hook)
-
-#### Architecture Flow:
+> **Context API** is like a **radio broadcast tower**.
+> Instead of passing messages person-to-person (prop drilling), the tower **broadcasts to everyone** who tunes in —
+> any component with a radio (consumer) can listen without the parent manually handing it down.
 
 ```
-Context Provider (Source of Truth)
-        |
-        ├── Component A (doesn't use context)
-        |     |
-        |     └── Component B (consumes context) ✅
-        |
-        └── Component C (doesn't use context)
-              |
-              └── Component D (consumes context) ✅
+❌ Prop Drilling (Telephone Chain)       ✅ Context API (Radio Tower)
+──────────────────────────────────────   ──────────────────────────────────────
+  App                                      📡 ThemeContext.Provider
+   └─▶ Page        (receives theme)             │ broadcasts "dark"
+        └─▶ Layout (receives theme)             │
+             └─▶ Sidebar (receives theme)       ├── 📻 Header   (tunes in)
+                  └─▶ Button (USES theme)       ├── 📻 Sidebar  (tunes in)
+                                                └── 📻 Footer   (tunes in)
+  (Every middle component carries it ❌)   (No middleman needed ✅)
 ```
 
-### 💻 Step-by-Step Implementation
+### 🏪 Vending Machine — useReducer
 
-#### Step 1: Create the Context
+> `useReducer` is like a **vending machine** — you press a button (dispatch an action),
+> the machine processes it using its internal rules (reducer function),
+> and delivers a new state (your snack) without you knowing the internal wiring.
 
-```javascript
-// ThemeContext.js
-import { createContext } from 'react';
+---
 
-// Create context with default value
-export const ThemeContext = createContext({
-  theme: 'light',
-  toggleTheme: () => {}
+## 📡 Context API & useContext
+
+### 📖 Theory
+
+**Context API** solves the **prop drilling** problem — when you need to pass data through many layers of components that don't actually need it, just to reach a deeply nested child.
+
+Context creates a **global data channel** — a Provider broadcasts a value, and any Consumer in the tree can read it directly, regardless of how deeply nested it is.
+
+```
+Without Context                         With Context
+──────────────────────────────────      ───────────────────────────────────
+  App (has user data)                     <UserContext.Provider value={user}>
+   ↓ passes user as prop                    App
+  Page (doesn't need user)                  └── Page
+   ↓ passes user down again                      └── Sidebar
+  Sidebar (doesn't need user)                          └── Avatar
+   ↓ passes user again                                      ↑
+  Avatar (finally uses user!)                   useContext(UserContext) ✅
+                                                No prop chain needed!
+```
+
+---
+
+### 🔨 3 Steps to Use Context
+
+```
+Step 1: createContext()    →   Create the channel
+Step 2: <Context.Provider> →   Broadcast the value
+Step 3: useContext()       →   Tune in from any component
+```
+
+---
+
+### 💻 Theme Context — Full Example
+
+```jsx
+import { createContext, useContext, useState } from "react";
+
+// Step 1: Create the context (with a default value)
+const ThemeContext = createContext({
+  theme  : "light",
+  toggle : () => {}
 });
-```
 
-**Explanation**: `createContext()` creates a Context object. The default value is used when a component doesn't have a matching Provider above it in the tree.
+// Step 2: Provider — broadcasts theme to all children
+function ThemeProvider({ children }) {
+  const [theme, setTheme] = useState("light");
 
-#### Step 2: Create the Provider Component
-
-```javascript
-// ThemeProvider.js
-import { useState } from 'react';
-import { ThemeContext } from './ThemeContext';
-
-export const ThemeProvider = ({ children }) => {
-  const [theme, setTheme] = useState('light');
-
-  const toggleTheme = () => {
-    setTheme(prevTheme => prevTheme === 'light' ? 'dark' : 'light');
-  };
-
-  // The value object contains all data/functions to share
-  const value = {
-    theme,
-    toggleTheme
-  };
+  const toggle = () => setTheme(t => t === "light" ? "dark" : "light");
 
   return (
-    <ThemeContext.Provider value={value}>
+    <ThemeContext.Provider value={{ theme, toggle }}>
       {children}
     </ThemeContext.Provider>
   );
-};
-```
+}
 
-**Explanation**: The Provider component wraps part of your app and makes the context value available to all descendants. The `value` prop contains the data you want to share.
+// Custom hook — cleaner than calling useContext everywhere
+function useTheme() {
+  return useContext(ThemeContext);
+}
 
-#### Step 3: Wrap Your App with Provider
+// Step 3: Any component tunes in — no props needed!
+function Navbar() {
+  const { theme, toggle } = useTheme();
 
-```javascript
-// App.js
-import { ThemeProvider } from './ThemeProvider';
-import MainContent from './MainContent';
+  const style = {
+    background : theme === "dark" ? "#1e1e2e" : "#ffffff",
+    color      : theme === "dark" ? "#cdd6f4" : "#1e1e2e",
+    padding    : "16px 24px",
+    display    : "flex",
+    justifyContent: "space-between",
+    alignItems    : "center"
+  };
 
+  return (
+    <nav style={style}>
+      <span>⚛️ React App</span>
+      <button onClick={toggle}>
+        {theme === "dark" ? "☀️ Light Mode" : "🌙 Dark Mode"}
+      </button>
+    </nav>
+  );
+}
+
+function Footer() {
+  const { theme } = useTheme();
+  return (
+    <footer style={{ background: theme === "dark" ? "#181825" : "#f5f5f5", padding: "16px", textAlign: "center" }}>
+      © 2026 — {theme} theme active
+    </footer>
+  );
+}
+
+// Wrap app with Provider — everything inside can now access theme
 function App() {
   return (
     <ThemeProvider>
-      <MainContent />
+      <Navbar />
+      <main>Page content here</main>
+      <Footer />
     </ThemeProvider>
   );
 }
 ```
 
-#### Step 4: Consume Context with useContext
+**📌 What this shows:**
+- `Navbar` and `Footer` both read `theme` directly — no prop passing
+- `toggle` is also available anywhere — no callback drilling
+- The custom `useTheme()` hook makes consuming context even cleaner
 
-```javascript
-// Button.js
-import { useContext } from 'react';
-import { ThemeContext } from './ThemeContext';
+---
 
-function ThemeButton() {
-  // Access context value directly
-  const { theme, toggleTheme } = useContext(ThemeContext);
+### 👤 User Auth Context — Real-World Pattern
+
+```jsx
+import { createContext, useContext, useState } from "react";
+
+const AuthContext = createContext(null);
+
+function AuthProvider({ children }) {
+  const [user, setUser] = useState(null);
+
+  const login  = (userData) => setUser(userData);
+  const logout = ()          => setUser(null);
 
   return (
-    <button 
-      onClick={toggleTheme}
-      style={{
-        background: theme === 'light' ? '#fff' : '#333',
-        color: theme === 'light' ? '#333' : '#fff'
-      }}
-    >
-      Current Theme: {theme}
-      Click to Toggle
-    </button>
+    <AuthContext.Provider value={{ user, login, logout, isLoggedIn: !!user }}>
+      {children}
+    </AuthContext.Provider>
   );
+}
+
+function useAuth() {
+  const ctx = useContext(AuthContext);
+  if (!ctx) throw new Error("useAuth must be used inside <AuthProvider>");
+  return ctx;
+}
+
+// Usage in any component
+function ProfileButton() {
+  const { user, isLoggedIn, logout } = useAuth();
+
+  return isLoggedIn
+    ? <button onClick={logout}>👋 {user.name} — Sign Out</button>
+    : <button>🔐 Sign In</button>;
 }
 ```
 
-**Explanation**: `useContext()` hook accepts a Context object and returns the current context value. The component will re-render when the context value changes.
+> 💡 **Best Practice:** Always create a custom hook (like `useAuth`, `useTheme`) that wraps `useContext`.
+> It gives a better error message if someone uses it outside the provider, and makes refactoring easier.
 
-### 🎨 Multiple Contexts Example
+---
 
-```javascript
-// Using multiple contexts together
-import { useContext } from 'react';
-import { ThemeContext } from './ThemeContext';
-import { UserContext } from './UserContext';
-import { LanguageContext } from './LanguageContext';
+## 🔁 useReducer for Complex State
 
-function ProfileCard() {
-  const { theme } = useContext(ThemeContext);
-  const { user } = useContext(UserContext);
-  const { language } = useContext(LanguageContext);
+### 📖 Theory
 
-  return (
-    <div className={`profile-${theme}`}>
-      <h2>{user.name}</h2>
-      <p>Language: {language}</p>
-    </div>
-  );
-}
+`useReducer` is an alternative to `useState` for managing **complex state logic**. While `useState` is perfect for independent values, `useReducer` shines when:
+
+- State has **multiple sub-values** that change together
+- The next state depends on the **previous state** in a complex way
+- State transitions follow **predictable, named rules** (like a state machine)
+
 ```
+useState                              useReducer
+──────────────────────────────────    ──────────────────────────────────────
+  setCount(count + 1)                   dispatch({ type: "INCREMENT" })
+  setCount(count - 1)                   dispatch({ type: "DECREMENT" })
+  setCount(0)                           dispatch({ type: "RESET" })
+  setItems([...items, newItem])         dispatch({ type: "ADD",    payload: item })
+  setItems(items.filter(...))           dispatch({ type: "REMOVE", payload: id })
 
-### ✅ Do's and ❌ Don'ts
-
-| ✅ Do's | ❌ Don'ts |
-|---------|-----------|
-| Use Context for truly global data (theme, auth, language) | Don't use Context to avoid all prop drilling |
-| Keep context values as specific as possible | Don't put all state in one massive context |
-| Split contexts by concern (UserContext, ThemeContext) | Don't overuse—causes unnecessary re-renders |
-| Use default values for better testing | Don't forget to wrap consumers with Provider |
-| Memoize context values to prevent re-renders | Don't create context in component body |
-
-### ⚠️ Common Mistakes
-
-1. **Creating new objects on every render**:
-```javascript
-// ❌ BAD - Creates new object every render
-<ThemeContext.Provider value={{ theme, toggleTheme }}>
-
-// ✅ GOOD - Memoize the value
-const value = useMemo(() => ({ theme, toggleTheme }), [theme]);
-<ThemeContext.Provider value={value}>
-```
-
-2. **Using Context for frequently changing data**:
-```javascript
-// ❌ BAD - Mouse position changes too frequently
-<MouseContext.Provider value={mousePosition}>
-
-// ✅ GOOD - Use local state or specialized libraries
+  Multiple setStates scattered ❌       All logic in one reducer ✅
+                                        Easy to test & reason about ✅
 ```
 
 ---
 
-## 🔄 useReducer for Complex State
+### 🔬 Anatomy of useReducer
 
-### 🎯 What is useReducer?
-
-`useReducer` is a React hook for managing complex state logic. It's an alternative to `useState` when you have state that involves multiple sub-values or when the next state depends on the previous one.
-
-### 🏪 Real-World Analogy
-
-Think of a **shopping cart in an online store**:
-
-- **useState**: Like keeping a simple note—"I have 3 items"
-- **useReducer**: Like a cashier with a detailed register—they can ADD items, REMOVE items, UPDATE quantities, APPLY discounts, CLEAR cart, etc., all with clear rules and procedures
-
-### 🧠 Deep Dive: Reducer Pattern
-
-A reducer is a pure function that takes the **current state** and an **action**, then returns a **new state**.
-
-```
-(currentState, action) => newState
+```jsx
+const [state, dispatch] = useReducer(reducer, initialState);
+//      │       │                     │         │
+//      │       │                     │         └── Starting state object
+//      │       │                     └── Pure function: (state, action) → newState
+//      │       └── Function to send actions
+//      └── Current state
 ```
 
-**Core Concepts**:
-
-1. **State**: The current data
-2. **Action**: An object describing what happened (must have a `type` property)
-3. **Reducer Function**: Contains logic for state updates
-4. **Dispatch**: Function to send actions to the reducer
-
-#### Architecture Flow:
-
-```
-Component
-    |
-    | dispatch(action)
-    ↓
-Reducer Function
-    |
-    | Processes action
-    | Returns new state
-    ↓
-State Updates
-    |
-    | Component re-renders
-    ↓
-Updated UI
-```
-
-### 💻 Step-by-Step Implementation
-
-#### Basic Counter Example
-
-```javascript
-import { useReducer } from 'react';
-
-// Step 1: Define initial state
-const initialState = { count: 0 };
-
-// Step 2: Create reducer function
-function counterReducer(state, action) {
-  // Use switch statement to handle different action types
+```jsx
+// Reducer — a pure function that handles all state transitions
+function reducer(state, action) {
   switch (action.type) {
-    case 'INCREMENT':
-      return { count: state.count + 1 };
-    case 'DECREMENT':
-      return { count: state.count - 1 };
-    case 'RESET':
-      return initialState;
-    case 'SET':
-      return { count: action.payload };
+    case "ACTION_NAME":
+      return { ...state, /* new state */ };
     default:
-      throw new Error(`Unknown action type: ${action.type}`);
+      return state;   // always return state for unknown actions
   }
 }
-
-// Step 3: Use in component
-function Counter() {
-  const [state, dispatch] = useReducer(counterReducer, initialState);
-
-  return (
-    <div>
-      <p>Count: {state.count}</p>
-      <button onClick={() => dispatch({ type: 'INCREMENT' })}>
-        +1
-      </button>
-      <button onClick={() => dispatch({ type: 'DECREMENT' })}>
-        -1
-      </button>
-      <button onClick={() => dispatch({ type: 'RESET' })}>
-        Reset
-      </button>
-      <button onClick={() => dispatch({ type: 'SET', payload: 100 })}>
-        Set to 100
-      </button>
-    </div>
-  );
-}
 ```
 
-**Explanation**:
-- `useReducer` returns `[state, dispatch]`
-- `dispatch` sends actions to the reducer
-- Actions are objects with a `type` (and optional `payload`)
-- The reducer returns a new state based on the action
+---
 
-#### Complex Example: Shopping Cart
+### 💻 Shopping Cart with useReducer
 
-```javascript
-// Initial state with multiple properties
-const initialState = {
-  items: [],
-  totalPrice: 0,
+```jsx
+import { useReducer } from "react";
+
+const INITIAL_STATE = {
+  items    : [],
+  total    : 0,
   itemCount: 0
 };
 
-// Reducer with complex logic
 function cartReducer(state, action) {
   switch (action.type) {
-    case 'ADD_ITEM': {
-      const newItem = action.payload;
-      const existingItem = state.items.find(item => item.id === newItem.id);
 
-      if (existingItem) {
-        // Item exists, increase quantity
+    case "ADD_ITEM": {
+      const exists = state.items.find(i => i.id === action.payload.id);
+      if (exists) {
+        // Item already in cart → increase quantity
         return {
           ...state,
-          items: state.items.map(item =>
-            item.id === newItem.id
-              ? { ...item, quantity: item.quantity + 1 }
-              : item
+          items    : state.items.map(i =>
+            i.id === action.payload.id ? { ...i, qty: i.qty + 1 } : i
           ),
-          totalPrice: state.totalPrice + newItem.price,
-          itemCount: state.itemCount + 1
-        };
-      } else {
-        // New item, add to cart
-        return {
-          ...state,
-          items: [...state.items, { ...newItem, quantity: 1 }],
-          totalPrice: state.totalPrice + newItem.price,
+          total    : state.total + action.payload.price,
           itemCount: state.itemCount + 1
         };
       }
-    }
-
-    case 'REMOVE_ITEM': {
-      const itemToRemove = state.items.find(item => item.id === action.payload);
-      const filteredItems = state.items.filter(item => item.id !== action.payload);
-
+      // New item → add to cart
       return {
         ...state,
-        items: filteredItems,
-        totalPrice: state.totalPrice - (itemToRemove.price * itemToRemove.quantity),
-        itemCount: state.itemCount - itemToRemove.quantity
+        items    : [...state.items, { ...action.payload, qty: 1 }],
+        total    : state.total + action.payload.price,
+        itemCount: state.itemCount + 1
       };
     }
 
-    case 'UPDATE_QUANTITY': {
-      const { id, quantity } = action.payload;
-      const item = state.items.find(item => item.id === id);
-      const quantityDiff = quantity - item.quantity;
-
+    case "REMOVE_ITEM": {
+      const item = state.items.find(i => i.id === action.payload);
       return {
         ...state,
-        items: state.items.map(item =>
-          item.id === id ? { ...item, quantity } : item
-        ),
-        totalPrice: state.totalPrice + (item.price * quantityDiff),
-        itemCount: state.itemCount + quantityDiff
+        items    : state.items.filter(i => i.id !== action.payload),
+        total    : state.total - (item.price * item.qty),
+        itemCount: state.itemCount - item.qty
       };
     }
 
-    case 'CLEAR_CART':
-      return initialState;
+    case "CLEAR_CART":
+      return INITIAL_STATE;
 
     default:
       return state;
   }
 }
 
-// Component using the reducer
 function ShoppingCart() {
-  const [cart, dispatch] = useReducer(cartReducer, initialState);
+  const [cart, dispatch] = useReducer(cartReducer, INITIAL_STATE);
 
-  const addItem = (item) => {
-    dispatch({ type: 'ADD_ITEM', payload: item });
-  };
-
-  const removeItem = (id) => {
-    dispatch({ type: 'REMOVE_ITEM', payload: id });
-  };
-
-  const updateQuantity = (id, quantity) => {
-    dispatch({ type: 'UPDATE_QUANTITY', payload: { id, quantity } });
-  };
-
-  const clearCart = () => {
-    dispatch({ type: 'CLEAR_CART' });
-  };
+  const products = [
+    { id: 1, name: "MacBook Pro M3", price: 189990 },
+    { id: 2, name: "AirPods Pro",    price: 24900  },
+    { id: 3, name: "MagSafe Charger",price: 3900   },
+  ];
 
   return (
     <div>
-      <h2>Shopping Cart ({cart.itemCount} items)</h2>
-      <div>
-        {cart.items.map(item => (
-          <div key={item.id}>
-            <span>{item.name} - ${item.price} x {item.quantity}</span>
-            <button onClick={() => updateQuantity(item.id, item.quantity + 1)}>
-              +
-            </button>
-            <button onClick={() => removeItem(item.id)}>Remove</button>
-          </div>
-        ))}
-      </div>
-      <p>Total: ${cart.totalPrice.toFixed(2)}</p>
-      <button onClick={clearCart}>Clear Cart</button>
+      <h2>🛍️ Products</h2>
+      {products.map(p => (
+        <div key={p.id}>
+          <span>{p.name} — ₹{p.price.toLocaleString()}</span>
+          <button onClick={() => dispatch({ type: "ADD_ITEM", payload: p })}>
+            + Add to Cart
+          </button>
+        </div>
+      ))}
+
+      <hr />
+      <h2>🛒 Cart ({cart.itemCount} items)</h2>
+      {cart.items.map(item => (
+        <div key={item.id}>
+          <span>{item.name} × {item.qty} — ₹{(item.price * item.qty).toLocaleString()}</span>
+          <button onClick={() => dispatch({ type: "REMOVE_ITEM", payload: item.id })}>
+            🗑 Remove
+          </button>
+        </div>
+      ))}
+
+      <h3>Total: ₹{cart.total.toLocaleString()}</h3>
+      <button onClick={() => dispatch({ type: "CLEAR_CART" })}>
+        Clear Cart
+      </button>
     </div>
   );
 }
 ```
 
-### 🔄 useReducer with Context
-
-Combining `useReducer` with Context creates powerful global state management:
-
-```javascript
-// Create context
-const CartContext = createContext();
-
-// Provider component
-export function CartProvider({ children }) {
-  const [cart, dispatch] = useReducer(cartReducer, initialState);
-
-  return (
-    <CartContext.Provider value={{ cart, dispatch }}>
-      {children}
-    </CartContext.Provider>
-  );
-}
-
-// Custom hook for easy access
-export function useCart() {
-  const context = useContext(CartContext);
-  if (!context) {
-    throw new Error('useCart must be used within CartProvider');
-  }
-  return context;
-}
-
-// Usage in any component
-function ProductCard({ product }) {
-  const { dispatch } = useCart();
-
-  const addToCart = () => {
-    dispatch({ type: 'ADD_ITEM', payload: product });
-  };
-
-  return (
-    <button onClick={addToCart}>Add to Cart</button>
-  );
-}
-```
-
-### ✅ Do's and ❌ Don'ts
-
-| ✅ Do's | ❌ Don'ts |
-|---------|-----------|
-| Use for complex state with multiple sub-values | Don't use for simple toggles or counters |
-| Keep reducer functions pure (no side effects) | Don't mutate state directly—return new objects |
-| Use descriptive action type names | Don't use generic names like 'UPDATE' |
-| Include payload when passing data | Don't perform async operations in reducers |
-| Add default case to throw errors | Don't forget to handle all action types |
-
-### 🆚 useState vs useReducer
-
-| Use useState When | Use useReducer When |
-|-------------------|---------------------|
-| Simple state (boolean, number, string) | Complex state objects |
-| Independent state updates | State updates depend on previous state |
-| 1-2 state variables | Multiple related state variables |
-| Simple logic | Complex update logic |
-| Local component state | State shared via Context |
+**📌 Key benefits visible here:**
+- Every state change is a **named action** — easy to trace what happened
+- The reducer is a **pure function** — easy to test in isolation
+- `dispatch` replaces multiple scattered `setState` calls
 
 ---
 
-## 🎭 React.memo and useMemo
+## ⚡ React.memo & useMemo
 
-### 🎯 What is React.memo?
+### 📖 Theory
 
-`React.memo` is a **Higher Order Component (HOC)** that memoizes a component, preventing unnecessary re-renders when props haven't changed.
+React re-renders a component every time its **parent re-renders** — even if the component's own props didn't change. For expensive components or calculations, this is wasteful.
 
-### 🎯 What is useMemo?
+**Two tools to control this:**
 
-`useMemo` is a hook that **memoizes a computed value**, recalculating it only when dependencies change.
+| Tool | What it memoizes | Use when |
+|------|:----------------:|---------|
+| `React.memo` | A **component** — skips re-render if props unchanged | Child component with expensive render |
+| `useMemo` | A **computed value** — recalculates only when deps change | Heavy calculation inside a component |
 
-### 🖼️ Real-World Analogy
+---
 
-**React.memo**: Imagine a portrait artist who painted your picture yesterday. Today, you come back wearing the same clothes, same hairstyle—everything identical. Instead of painting you again, the artist shows you yesterday's painting. That's React.memo!
+### ⚡ React.memo — Skip Unnecessary Re-renders
 
-**useMemo**: Think of a calculator with a memory function. You calculated 2547 × 8392 and saved the result. Every time someone asks for that same calculation, you just recall the saved answer instead of recalculating.
+```jsx
+import { useState, memo } from "react";
 
-### 🧠 Deep Dive: How Memoization Works
-
-**Problem**: React re-renders components when parent re-renders, even if props haven't changed.
-
-```
-Parent State Changes
-    ↓
-Parent Re-renders
-    ↓
-ALL Child Components Re-render ❌
-(Even if their props didn't change!)
-```
-
-**Solution with Memoization**:
-
-```
-Parent State Changes
-    ↓
-Parent Re-renders
-    ↓
-React.memo Checks Props
-    ↓
-Props Same? → Skip Re-render ✅
-Props Different? → Re-render ✅
-```
-
-### 💻 React.memo Step-by-Step
-
-#### Without React.memo (Problem)
-
-```javascript
-// Child component
-function ExpensiveChild({ name, count }) {
-  console.log('ExpensiveChild rendered!');
-
-  // Imagine expensive calculations here
-  const result = heavyCalculation();
-
-  return (
-    <div>
-      <h3>{name}</h3>
-      <p>Count: {count}</p>
-    </div>
-  );
-}
-
-// Parent component
-function Parent() {
-  const [parentCount, setParentCount] = useState(0);
-  const [childCount, setChildCount] = useState(0);
-
-  return (
-    <div>
-      <button onClick={() => setParentCount(parentCount + 1)}>
-        Parent Count: {parentCount}
-      </button>
-
-      {/* This re-renders even when childCount doesn't change! */}
-      <ExpensiveChild name="John" count={childCount} />
-
-      <button onClick={() => setChildCount(childCount + 1)}>
-        Child Count: {childCount}
-      </button>
-    </div>
-  );
-}
-```
-
-**Problem**: Clicking "Parent Count" triggers `ExpensiveChild` to re-render even though its props (`name` and `count`) haven't changed!
-
-#### With React.memo (Solution)
-
-```javascript
-import { memo } from 'react';
-
-// Wrap component with memo
-const ExpensiveChild = memo(function ExpensiveChild({ name, count }) {
-  console.log('ExpensiveChild rendered!');
-
-  const result = heavyCalculation();
-
-  return (
-    <div>
-      <h3>{name}</h3>
-      <p>Count: {count}</p>
-    </div>
-  );
-});
-
-// Now clicking "Parent Count" won't re-render ExpensiveChild! ✅
-```
-
-**Explanation**: `React.memo` performs a shallow comparison of props. If props are the same, React reuses the last rendered output.
-
-#### Custom Comparison Function
-
-```javascript
-const ExpensiveChild = memo(
-  function ExpensiveChild({ user, posts }) {
-    return (
-      <div>
-        <h3>{user.name}</h3>
-        <p>Posts: {posts.length}</p>
-      </div>
-    );
-  },
-  // Custom comparison function
-  (prevProps, nextProps) => {
-    // Return true if props are equal (skip re-render)
-    // Return false if props are different (re-render)
-    return (
-      prevProps.user.id === nextProps.user.id &&
-      prevProps.posts.length === nextProps.posts.length
-    );
-  }
-);
-```
-
-### 💻 useMemo Step-by-Step
-
-#### Without useMemo (Problem)
-
-```javascript
-function SearchResults({ query, items }) {
-  // This expensive filtering runs on EVERY render!
-  // Even if query and items haven't changed!
-  const filteredItems = items.filter(item => {
-    // Imagine complex search logic here
-    return expensiveSearchAlgorithm(item, query);
-  });
-
-  return (
-    <ul>
-      {filteredItems.map(item => (
-        <li key={item.id}>{item.name}</li>
-      ))}
-    </ul>
-  );
-}
-```
-
-#### With useMemo (Solution)
-
-```javascript
-import { useMemo } from 'react';
-
-function SearchResults({ query, items }) {
-  // Memoize the expensive calculation
-  const filteredItems = useMemo(() => {
-    console.log('Filtering items...');
-    return items.filter(item => {
-      return expensiveSearchAlgorithm(item, query);
-    });
-  }, [query, items]); // Only recalculate when these change
-
-  return (
-    <ul>
-      {filteredItems.map(item => (
-        <li key={item.id}>{item.name}</li>
-      ))}
-    </ul>
-  );
-}
-```
-
-**Explanation**: 
-- `useMemo` takes a function and a dependency array
-- The function runs only when dependencies change
-- The returned value is cached between renders
-
-#### Complex Example: Sorting and Filtering
-
-```javascript
-function ProductList({ products, sortBy, filters }) {
-  // Memoize filtered products
-  const filteredProducts = useMemo(() => {
-    console.log('Filtering products...');
-    return products.filter(product => {
-      if (filters.minPrice && product.price < filters.minPrice) return false;
-      if (filters.maxPrice && product.price > filters.maxPrice) return false;
-      if (filters.category && product.category !== filters.category) return false;
-      return true;
-    });
-  }, [products, filters]);
-
-  // Memoize sorted products (depends on filtered products)
-  const sortedProducts = useMemo(() => {
-    console.log('Sorting products...');
-    return [...filteredProducts].sort((a, b) => {
-      switch (sortBy) {
-        case 'price-asc':
-          return a.price - b.price;
-        case 'price-desc':
-          return b.price - a.price;
-        case 'name':
-          return a.name.localeCompare(b.name);
-        default:
-          return 0;
-      }
-    });
-  }, [filteredProducts, sortBy]);
-
-  return (
-    <div>
-      {sortedProducts.map(product => (
-        <ProductCard key={product.id} product={product} />
-      ))}
-    </div>
-  );
-}
-```
-
-### 🔗 Combining React.memo with useMemo
-
-```javascript
-// Memoized component
+// Without memo — re-renders every time parent renders
+// With memo — only re-renders when its props actually change
 const ProductCard = memo(function ProductCard({ product, onAddToCart }) {
+  console.log(`Rendering: ${product.name}`);  // watch this in DevTools
+
   return (
     <div className="card">
       <h3>{product.name}</h3>
-      <p>${product.price}</p>
-      <button onClick={() => onAddToCart(product.id)}>
-        Add to Cart
-      </button>
+      <p>₹{product.price.toLocaleString()}</p>
+      <button onClick={() => onAddToCart(product)}>Add to Cart</button>
     </div>
   );
 });
 
-function ProductList({ products }) {
-  const [cart, setCart] = useState([]);
+function Store() {
+  const [cartCount,  setCartCount]  = useState(0);
+  const [searchQuery, setSearchQuery] = useState("");
 
-  // Memoize the callback to prevent ProductCard re-renders
-  const handleAddToCart = useCallback((id) => {
-    setCart(prev => [...prev, id]);
-  }, []);
+  const products = [
+    { id: 1, name: "MacBook Pro",  price: 189990 },
+    { id: 2, name: "iPhone 15",    price: 79900  },
+    { id: 3, name: "iPad Air",     price: 59900  },
+  ];
 
-  // Memoize expensive calculation
-  const totalValue = useMemo(() => {
-    return cart.reduce((sum, id) => {
-      const product = products.find(p => p.id === id);
-      return sum + (product?.price || 0);
-    }, 0);
-  }, [cart, products]);
+  const handleAdd = (product) => setCartCount(c => c + 1);
 
+  // Without memo: typing in search re-renders ALL ProductCards
+  // With memo:    only the Store re-renders, ProductCards are skipped ✅
   return (
     <div>
-      <p>Total Value: ${totalValue}</p>
-      {products.map(product => (
-        <ProductCard
-          key={product.id}
-          product={product}
-          onAddToCart={handleAddToCart}
-        />
+      <input
+        value       = {searchQuery}
+        onChange    = {e => setSearchQuery(e.target.value)}
+        placeholder = "Search (watch console)..."
+      />
+      <p>🛒 Cart: {cartCount} items</p>
+
+      {products.map(p => (
+        <ProductCard key={p.id} product={p} onAddToCart={handleAdd} />
       ))}
     </div>
   );
 }
 ```
 
-### ✅ Do's and ❌ Don'ts
+> ⚠️ **Memo only does a shallow comparison** of props. If you pass a new object or function reference on every render, memo won't help — that's where `useCallback` comes in.
 
-| ✅ Do's | ❌ Don'ts |
-|---------|-----------|
-| Use for expensive calculations | Don't memoize everything (adds overhead) |
-| Use when component renders with same props often | Don't use for cheap calculations |
-| Profile before optimizing | Don't forget dependency arrays |
-| Memoize components in lists | Don't rely on useMemo for side effects |
-| Use with Context to prevent re-renders | Don't use as a semantic guarantee |
+---
 
-### ⚠️ Common Mistakes
+### 💡 useMemo — Cache Expensive Calculations
 
-1. **Forgetting dependencies**:
-```javascript
-// ❌ BAD - Missing dependencies
-const filtered = useMemo(() => {
-  return items.filter(item => item.price > minPrice);
-}, [items]); // Missing minPrice!
+```jsx
+import { useState, useMemo } from "react";
 
-// ✅ GOOD
-const filtered = useMemo(() => {
-  return items.filter(item => item.price > minPrice);
-}, [items, minPrice]);
+function Analytics({ transactions }) {
+  const [filter, setFilter]   = useState("all");
+  const [sortBy, setSortBy]   = useState("date");
+
+  // Without useMemo — recalculates on EVERY render (even unrelated state changes)
+  // With useMemo — only recalculates when transactions or filter changes
+  const stats = useMemo(() => {
+    console.log("Calculating stats...");  // should run only when deps change
+
+    const filtered = transactions.filter(t =>
+      filter === "all" || t.type === filter
+    );
+
+    const total   = filtered.reduce((sum, t) => sum + t.amount, 0);
+    const avg     = filtered.length ? total / filtered.length : 0;
+    const highest = Math.max(...filtered.map(t => t.amount), 0);
+
+    return { filtered, total, avg, highest };
+  }, [transactions, filter]);  // only recalculates when these change
+
+  return (
+    <div>
+      <select onChange={e => setFilter(e.target.value)}>
+        <option value="all">All</option>
+        <option value="credit">Credits</option>
+        <option value="debit">Debits</option>
+      </select>
+
+      <p>📊 Total: ₹{stats.total.toLocaleString()}</p>
+      <p>📈 Average: ₹{stats.avg.toFixed(2)}</p>
+      <p>🏆 Highest: ₹{stats.highest.toLocaleString()}</p>
+      <p>{stats.filtered.length} transactions shown</p>
+    </div>
+  );
+}
 ```
 
-2. **Memoizing primitives**:
-```javascript
-// ❌ BAD - No benefit
-const doubled = useMemo(() => count * 2, [count]);
+> 💡 **When NOT to use useMemo:** Don't wrap every calculation — memoization itself has a cost. Use it only when a calculation is genuinely slow (complex sorting, filtering large arrays, heavy math).
 
-// ✅ GOOD - Just calculate directly
-const doubled = count * 2;
+---
+
+## 🔒 useCallback Hook
+
+### 📖 Theory
+
+In JavaScript, a function defined inside a component is **recreated on every render** — it's a brand new reference each time. This breaks `React.memo` because memo sees a new `onAddToCart` prop and re-renders anyway.
+
+`useCallback` **memoizes a function** so it keeps the same reference between renders unless its dependencies change.
+
+```
+Without useCallback                   With useCallback
+──────────────────────────────────    ───────────────────────────────────
+  Every render creates new fn ref       Function ref stays the same
+  memo sees new prop reference          memo sees same prop reference
+  Child re-renders anyway ❌            Child skips re-render ✅
 ```
 
 ---
 
-## 🔁 useCallback Hook
+### 💻 useCallback in Practice
 
-### 🎯 What is useCallback?
+```jsx
+import { useState, useCallback, memo } from "react";
 
-`useCallback` is a hook that **memoizes functions**, returning the same function reference across renders unless dependencies change. It's like `useMemo` but specifically for functions.
-
-### 📞 Real-World Analogy
-
-Imagine you have a **phone contact list**:
-
-- **Without useCallback**: Every time you open your phone, your friend's contact gets deleted and recreated. The phone number is the same, but it's treated as a "new" contact each time.
-
-- **With useCallback**: Your friend's contact stays in your phone with the same reference. You only update it when something actually changes (like their phone number).
-
-### 🧠 Deep Dive: Why useCallback?
-
-**The Problem**: In JavaScript, functions are objects. Every time a component re-renders, new function instances are created:
-
-```javascript
-function Parent() {
-  const [count, setCount] = useState(0);
-
-  // New function created on EVERY render! ❌
-  const handleClick = () => {
-    console.log('Clicked!');
-  };
-
-  return <Child onClick={handleClick} />;
-}
-
-const Child = memo(({ onClick }) => {
-  // This still re-renders because onClick is a "new" function each time!
-  return <button onClick={onClick}>Click Me</button>;
+// Memoized child — only re-renders when its props change
+const ActionButton = memo(function ActionButton({ label, onClick }) {
+  console.log(`Rendered: ${label}`);
+  return <button onClick={onClick}>{label}</button>;
 });
-```
 
-**Why This Matters**:
-- React.memo does shallow comparison
-- `handleClick` is recreated every render
-- New function reference = props changed = Child re-renders
-- Memoization is defeated! ❌
+function Dashboard() {
+  const [count,  setCount]  = useState(0);
+  const [darkMode, setDark] = useState(false);
 
-### 💻 Step-by-Step Implementation
-
-#### Basic Usage
-
-```javascript
-import { useState, useCallback } from 'react';
-
-function Parent() {
-  const [count, setCount] = useState(0);
-  const [otherState, setOtherState] = useState(0);
-
-  // Without useCallback - new function every render ❌
-  const handleClickBad = () => {
-    console.log('Clicked!');
-  };
-
-  // With useCallback - same function reference ✅
-  const handleClickGood = useCallback(() => {
-    console.log('Clicked!');
-  }, []); // Empty deps = function never changes
-
-  // With dependencies
+  // ✅ Same function reference across renders — unless deps change
   const handleIncrement = useCallback(() => {
-    setCount(count + 1); // Uses count from closure
-  }, [count]); // Recreates when count changes
+    setCount(prev => prev + 1);
+  }, []);   // empty deps → never recreates
 
-  return (
-    <div>
-      <p>Count: {count}</p>
-      <button onClick={() => setOtherState(otherState + 1)}>
-        Other State: {otherState}
-      </button>
-      <Child onClick={handleClickGood} />
-    </div>
-  );
-}
-
-const Child = memo(({ onClick }) => {
-  console.log('Child rendered!');
-  return <button onClick={onClick}>Click Me</button>;
-});
-```
-
-**Explanation**:
-- `useCallback` returns a memoized version of the function
-- Function only changes if dependencies change
-- Prevents unnecessary Child re-renders
-
-#### Advanced Example: With Parameters
-
-```javascript
-function TodoList({ todos }) {
-  const [filter, setFilter] = useState('all');
-
-  // Memoize delete handler
-  const handleDelete = useCallback((id) => {
-    // API call or state update
-    console.log(`Deleting todo ${id}`);
-    deleteTodoAPI(id);
-  }, []); // No dependencies needed
-
-  // Memoize update handler
-  const handleUpdate = useCallback((id, newText) => {
-    console.log(`Updating todo ${id} to: ${newText}`);
-    updateTodoAPI(id, newText);
-  }, []); // No dependencies needed
-
-  // Memoize filtered todos
-  const filteredTodos = useMemo(() => {
-    return todos.filter(todo => {
-      if (filter === 'completed') return todo.completed;
-      if (filter === 'active') return !todo.completed;
-      return true;
-    });
-  }, [todos, filter]);
-
-  return (
-    <div>
-      <FilterButtons filter={filter} setFilter={setFilter} />
-      {filteredTodos.map(todo => (
-        <TodoItem
-          key={todo.id}
-          todo={todo}
-          onDelete={handleDelete}
-          onUpdate={handleUpdate}
-        />
-      ))}
-    </div>
-  );
-}
-
-// Memoized component won't re-render unnecessarily
-const TodoItem = memo(({ todo, onDelete, onUpdate }) => {
-  const [isEditing, setIsEditing] = useState(false);
-  const [text, setText] = useState(todo.text);
-
-  const handleSave = () => {
-    onUpdate(todo.id, text);
-    setIsEditing(false);
-  };
-
-  return (
-    <div>
-      {isEditing ? (
-        <>
-          <input value={text} onChange={(e) => setText(e.target.value)} />
-          <button onClick={handleSave}>Save</button>
-        </>
-      ) : (
-        <>
-          <span>{todo.text}</span>
-          <button onClick={() => setIsEditing(true)}>Edit</button>
-          <button onClick={() => onDelete(todo.id)}>Delete</button>
-        </>
-      )}
-    </div>
-  );
-});
-```
-
-### 🆚 useCallback vs useMemo
-
-```javascript
-// useCallback - Memoizes the FUNCTION itself
-const handleClick = useCallback(() => {
-  doSomething();
-}, [dependency]);
-
-// Equivalent to:
-const handleClick = useMemo(() => {
-  return () => {
-    doSomething();
-  };
-}, [dependency]);
-
-// useMemo - Memoizes the RETURN VALUE
-const result = useMemo(() => {
-  return expensiveCalculation(a, b);
-}, [a, b]);
-```
-
-**Key Difference**:
-- `useCallback(fn, deps)` = `useMemo(() => fn, deps)`
-- useCallback is syntactic sugar for memoizing functions
-
-### 🔧 Practical Example: Event Handlers with State
-
-#### Problem with Stale Closures
-
-```javascript
-function Counter() {
-  const [count, setCount] = useState(0);
-
-  // ❌ BAD - Stale closure issue
-  const handleAlert = useCallback(() => {
-    setTimeout(() => {
-      alert(`Count is: ${count}`); // Uses stale count!
-    }, 3000);
-  }, []); // Empty deps = count from initial render
-
-  return (
-    <div>
-      <p>Count: {count}</p>
-      <button onClick={() => setCount(count + 1)}>Increment</button>
-      <button onClick={handleAlert}>Show Count (in 3s)</button>
-    </div>
-  );
-}
-// Click Increment 5 times, then Show Count → Alert shows "0" ❌
-```
-
-#### Solution 1: Include in Dependencies
-
-```javascript
-// ✅ GOOD - But recreates function on every count change
-const handleAlert = useCallback(() => {
-  setTimeout(() => {
-    alert(`Count is: ${count}`);
-  }, 3000);
-}, [count]); // Function recreates when count changes
-```
-
-#### Solution 2: Use Functional Updates
-
-```javascript
-// ✅ BETTER - No stale closures, stable function
-const handleAlert = useCallback(() => {
-  setTimeout(() => {
-    setCount(currentCount => {
-      alert(`Count is: ${currentCount}`);
-      return currentCount; // Don't actually update
-    });
-  }, 3000);
-}, []); // Empty deps, no stale closure!
-```
-
-#### Solution 3: Use Ref
-
-```javascript
-const [count, setCount] = useState(0);
-const countRef = useRef(count);
-
-// Keep ref updated
-useEffect(() => {
-  countRef.current = count;
-}, [count]);
-
-// ✅ BEST - Stable function, always current value
-const handleAlert = useCallback(() => {
-  setTimeout(() => {
-    alert(`Count is: ${countRef.current}`);
-  }, 3000);
-}, []); // Empty deps, ref always has current value
-```
-
-### ✅ Do's and ❌ Don'ts
-
-| ✅ Do's | ❌ Don'ts |
-|---------|-----------|
-| Use when passing functions to memoized children | Don't use for functions not passed as props |
-| Use with event handlers in optimized components | Don't overuse—it has its own cost |
-| Combine with React.memo for best results | Don't forget to include dependencies |
-| Use for functions in dependency arrays | Don't use for functions called once per render |
-| Use in custom hooks that return functions | Don't assume it improves performance automatically |
-
-### 📊 Performance Impact
-
-```javascript
-// Scenario: List of 1000 items
-function ItemList({ items }) {
-  const [selectedId, setSelectedId] = useState(null);
-
-  // ❌ Without useCallback - 1000 components re-render on ANY parent update
-  const handleSelect = (id) => {
-    setSelectedId(id);
-  };
-
-  // ✅ With useCallback - Only changed item re-renders
-  const handleSelectOptimized = useCallback((id) => {
-    setSelectedId(id);
+  const handleReset = useCallback(() => {
+    setCount(0);
   }, []);
 
+  // Toggling dark mode re-renders Dashboard
+  // But ActionButtons are SKIPPED because their callbacks haven't changed ✅
   return (
     <div>
-      {items.map(item => (
-        <ListItem
-          key={item.id}
-          item={item}
-          onSelect={handleSelectOptimized}
-          isSelected={item.id === selectedId}
-        />
-      ))}
+      <p>Count: {count}</p>
+      <ActionButton label="➕ Increment" onClick={handleIncrement} />
+      <ActionButton label="🔄 Reset"     onClick={handleReset}     />
+      <button onClick={() => setDark(d => !d)}>Toggle Dark Mode</button>
     </div>
   );
 }
+```
 
-const ListItem = memo(({ item, onSelect, isSelected }) => {
-  console.log(`Rendering item ${item.id}`);
-  return (
-    <div
-      onClick={() => onSelect(item.id)}
-      style={{ background: isSelected ? 'lightblue' : 'white' }}
-    >
-      {item.name}
-    </div>
-  );
-});
+### React.memo vs useMemo vs useCallback — At a Glance
+
+| Hook / API | Memoizes | Returns | Use Case |
+|:----------:|:--------:|:-------:|---------|
+| `React.memo` | A component | Component | Skip child re-renders |
+| `useMemo` | A computed value | The value | Cache heavy calculations |
+| `useCallback` | A function | The function | Stable function refs for memo'd children |
+
+---
+
+## ✂️ Lazy Loading & Code Splitting
+
+### 📖 Theory
+
+By default React bundles **all your components** into one JavaScript file. For large apps this means users download code for pages they may never visit — slowing down initial load.
+
+**Code splitting** breaks the bundle into smaller chunks. **Lazy loading** loads those chunks only when needed — on navigation or interaction.
+
+```
+Without Code Splitting                  With Code Splitting
+──────────────────────────────────      ───────────────────────────────────────
+  Bundle: app.js (2MB)                    main.js       (200KB) ← loads first
+  User downloads everything               home.chunk.js (100KB) ← loads on /home
+  on first visit ❌                        dashboard.chunk.js    ← loads on /dashboard
+                                          settings.chunk.js     ← loads on /settings
+                                          (Users only download what they visit ✅)
 ```
 
 ---
 
-## 🚀 Lazy Loading & Code Splitting
+### 💻 React.lazy + Suspense
 
-### 🎯 What is Lazy Loading?
+```jsx
+import { lazy, Suspense, useState } from "react";
 
-**Lazy loading** is a technique where you load components or resources only when they're needed, rather than loading everything upfront. This reduces initial bundle size and improves performance.
+// Components are loaded ONLY when rendered for the first time
+const Dashboard = lazy(() => import("./pages/Dashboard"));
+const Profile   = lazy(() => import("./pages/Profile"));
+const Settings  = lazy(() => import("./pages/Settings"));
 
-### 🎯 What is Code Splitting?
-
-**Code splitting** breaks your application into smaller chunks that can be loaded on demand, rather than one massive bundle.
-
-### 📦 Real-World Analogy
-
-Imagine you're going to a **buffet restaurant**:
-
-- **Without Lazy Loading**: The chef prepares ALL dishes (appetizers, main courses, desserts, drinks) before you even arrive. You might only want pizza, but everything is ready and taking up space.
-
-- **With Lazy Loading**: The chef prepares dishes as you order them. You want pizza? They make pizza. You want dessert? They make it when you're ready. Everything else stays in the fridge until needed.
-
-**Code Splitting = Kitchen Stations**: Instead of one chef making everything (one big file), you have separate stations—pizza station, salad station, dessert station (separate chunks). Each loads independently.
-
-### 🧠 Deep Dive: How Lazy Loading Works
-
-#### Build Process Without Code Splitting:
-
-```
-All Code → Webpack → main.bundle.js (5 MB) ❌
-                     ↓
-                User Downloads 5 MB
-                     ↓
-                Slow Initial Load!
-```
-
-#### Build Process With Code Splitting:
-
-```
-Code → Webpack → main.bundle.js (500 KB) ✅
-                ├── dashboard.chunk.js (1 MB)
-                ├── admin.chunk.js (800 KB)
-                └── profile.chunk.js (600 KB)
-                     ↓
-User Downloads 500 KB initially
-Loads other chunks only when navigating to those routes!
-```
-
-### 💻 Step-by-Step Implementation
-
-#### Basic React.lazy()
-
-```javascript
-import { lazy, Suspense } from 'react';
-
-// ❌ Normal import - loads immediately
-import Dashboard from './Dashboard';
-
-// ✅ Lazy import - loads when needed
-const Dashboard = lazy(() => import('./Dashboard'));
+// Loading fallback — shown while the chunk downloads
+function PageSkeleton() {
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: "12px", padding: "24px" }}>
+      <div style={{ height: "32px", background: "#e0e0e0", borderRadius: "4px", width: "40%" }} />
+      <div style={{ height: "16px", background: "#e0e0e0", borderRadius: "4px", width: "80%" }} />
+      <div style={{ height: "16px", background: "#e0e0e0", borderRadius: "4px", width: "60%" }} />
+    </div>
+  );
+}
 
 function App() {
-  const [showDashboard, setShowDashboard] = useState(false);
+  const [page, setPage] = useState("dashboard");
+
+  const renderPage = () => {
+    switch (page) {
+      case "dashboard": return <Dashboard />;
+      case "profile":   return <Profile />;
+      case "settings":  return <Settings />;
+      default:          return <Dashboard />;
+    }
+  };
 
   return (
     <div>
-      <button onClick={() => setShowDashboard(true)}>
-        Load Dashboard
-      </button>
-
-      {showDashboard && (
-        <Suspense fallback={<div>Loading Dashboard...</div>}>
-          <Dashboard />
-        </Suspense>
-      )}
-    </div>
-  );
-}
-```
-
-**Explanation**:
-- `lazy()` takes a function that returns a dynamic `import()`
-- Component is only loaded when rendered
-- `<Suspense>` wraps lazy components and shows fallback while loading
-
-#### Route-Based Code Splitting
-
-```javascript
-import { lazy, Suspense } from 'react';
-import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
-
-// Lazy load route components
-const Home = lazy(() => import('./pages/Home'));
-const About = lazy(() => import('./pages/About'));
-const Dashboard = lazy(() => import('./pages/Dashboard'));
-const Profile = lazy(() => import('./pages/Profile'));
-const AdminPanel = lazy(() => import('./pages/AdminPanel'));
-
-// Loading component
-function LoadingSpinner() {
-  return (
-    <div className="loading-container">
-      <div className="spinner"></div>
-      <p>Loading...</p>
-    </div>
-  );
-}
-
-function App() {
-  return (
-    <BrowserRouter>
       <nav>
-        <Link to="/">Home</Link>
-        <Link to="/about">About</Link>
-        <Link to="/dashboard">Dashboard</Link>
-        <Link to="/profile">Profile</Link>
-        <Link to="/admin">Admin</Link>
+        <button onClick={() => setPage("dashboard")}>📊 Dashboard</button>
+        <button onClick={() => setPage("profile")}>👤 Profile</button>
+        <button onClick={() => setPage("settings")}>⚙️ Settings</button>
       </nav>
 
-      <Suspense fallback={<LoadingSpinner />}>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/profile" element={<Profile />} />
-          <Route path="/admin" element={<AdminPanel />} />
-        </Routes>
+      {/* Suspense shows fallback while the lazy component loads */}
+      <Suspense fallback={<PageSkeleton />}>
+        {renderPage()}
       </Suspense>
-    </BrowserRouter>
-  );
-}
-```
-
-**Benefits**:
-- Each route loads only when visited
-- Reduced initial bundle size
-- Faster time to interactive
-
-#### Advanced: Multiple Suspense Boundaries
-
-```javascript
-function App() {
-  return (
-    <div>
-      {/* Header loads immediately */}
-      <Header />
-
-      {/* Main content with its own loading state */}
-      <Suspense fallback={<div>Loading main content...</div>}>
-        <MainContent />
-      </Suspense>
-
-      {/* Sidebar with its own loading state */}
-      <Suspense fallback={<div>Loading sidebar...</div>}>
-        <Sidebar />
-      </Suspense>
-
-      {/* Footer loads immediately */}
-      <Footer />
-    </div>
-  );
-}
-
-const MainContent = lazy(() => import('./MainContent'));
-const Sidebar = lazy(() => import('./Sidebar'));
-```
-
-**Benefits**:
-- Different parts load independently
-- Better user experience with granular loading states
-- Critical content can load first
-
-#### Named Exports with Lazy Loading
-
-```javascript
-// ❌ Doesn't work - lazy() expects default export
-const { Button } = lazy(() => import('./components'));
-
-// ✅ Solution 1: Re-export as default
-// components/Button/index.js
-export { default } from './Button';
-
-// App.js
-const Button = lazy(() => import('./components/Button'));
-
-// ✅ Solution 2: Create wrapper component
-const Button = lazy(() =>
-  import('./components').then(module => ({ default: module.Button }))
-);
-```
-
-### 🎨 Enhanced Loading States
-
-```javascript
-import { lazy, Suspense, useState } from 'react';
-
-const HeavyComponent = lazy(() => 
-  // Simulate slow network
-  new Promise(resolve => {
-    setTimeout(() => {
-      resolve(import('./HeavyComponent'));
-    }, 2000);
-  })
-);
-
-function LoadingFallback() {
-  return (
-    <div className="loading-fallback">
-      <div className="skeleton-loader">
-        <div className="skeleton-header"></div>
-        <div className="skeleton-text"></div>
-        <div className="skeleton-text"></div>
-        <div className="skeleton-text short"></div>
-      </div>
-    </div>
-  );
-}
-
-function App() {
-  const [showComponent, setShowComponent] = useState(false);
-
-  return (
-    <div>
-      <button onClick={() => setShowComponent(true)}>
-        Load Component
-      </button>
-
-      {showComponent && (
-        <Suspense fallback={<LoadingFallback />}>
-          <HeavyComponent />
-        </Suspense>
-      )}
     </div>
   );
 }
 ```
 
-### 🔧 Preloading Components
-
-```javascript
-// Preload component before user navigates
-const AdminPanel = lazy(() => import('./AdminPanel'));
-
-function Navigation() {
-  // Preload on hover
-  const handleMouseEnter = () => {
-    // Triggers the import
-    import('./AdminPanel');
-  };
-
-  return (
-    <nav>
-      <Link 
-        to="/admin" 
-        onMouseEnter={handleMouseEnter}
-      >
-        Admin Panel
-      </Link>
-    </nav>
-  );
-}
-```
-
-### 📦 Dynamic Imports for Non-Components
-
-```javascript
-// Lazy load heavy libraries
-function ChartComponent({ data }) {
-  const [Chart, setChart] = useState(null);
-
-  useEffect(() => {
-    // Dynamically import chart library
-    import('chart.js').then(chartModule => {
-      setChart(() => chartModule.Chart);
-    });
-  }, []);
-
-  if (!Chart) {
-    return <div>Loading chart...</div>;
-  }
-
-  return <Chart data={data} />;
-}
-
-// Lazy load utilities
-async function processData(data) {
-  // Only load when needed
-  const { heavyProcessor } = await import('./heavyProcessor');
-  return heavyProcessor(data);
-}
-```
-
-### ✅ Do's and ❌ Don'ts
-
-| ✅ Do's | ❌ Don'ts |
-|---------|-----------|
-| Split code at route level | Don't split every single component |
-| Use for heavy third-party libraries | Don't lazy load components above the fold |
-| Provide meaningful loading states | Don't show blank screens while loading |
-| Preload critical routes on hover | Don't split tiny components |
-| Use Suspense boundaries strategically | Don't create too many small chunks |
-
-### 📊 Performance Impact
-
-```javascript
-// Example: E-commerce Site
-
-// ❌ Without Code Splitting
-// Initial Bundle: 2.5 MB
-// Time to Interactive: 8 seconds
-
-// ✅ With Code Splitting
-// Initial Bundle: 400 KB (Home page only)
-// Time to Interactive: 1.5 seconds
-// Other chunks load on demand:
-//   - Product Page: 300 KB
-//   - Checkout: 250 KB
-//   - Admin Panel: 800 KB
-//   - Reviews: 150 KB
-
-const ProductPage = lazy(() => import('./pages/ProductPage'));
-const Checkout = lazy(() => import('./pages/Checkout'));
-const AdminPanel = lazy(() => import('./pages/AdminPanel'));
-const Reviews = lazy(() => import('./components/Reviews'));
-
-// Result: 80% faster initial load! 🚀
-```
+**📌 Rules for lazy loading:**
+- `React.lazy` only works with **default exports**
+- Must always be wrapped in `<Suspense>` with a `fallback`
+- Works best with **React Router** — lazy load each route's page component
 
 ---
 
 ## 🛡️ Error Boundaries
 
-### 🎯 What are Error Boundaries?
+### 📖 Theory
 
-**Error Boundaries** are React components that catch JavaScript errors anywhere in their child component tree, log those errors, and display a fallback UI instead of crashing the entire app.
-
-### 🚨 Real-World Analogy
-
-Think of **circuit breakers in your home**:
-
-- **Without Error Boundaries**: One faulty appliance (component error) causes the entire house to lose power (app crashes).
-
-- **With Error Boundaries**: The circuit breaker isolates the problem. That one room loses power, but the rest of your house works fine. You can still use your kitchen even if the bedroom circuit failed.
-
-### 🧠 Deep Dive: The Error Problem in React
-
-#### What Happens Without Error Boundaries?
+JavaScript errors inside components can crash the **entire React tree**, leaving users with a blank white screen. **Error Boundaries** are React components that **catch errors** anywhere in their child tree and display a fallback UI instead — like a try/catch for components.
 
 ```
-Component Tree:
-App
-├── Header ✅
-├── Sidebar ✅
-└── MainContent
-    ├── UserProfile
-    └── PostList ❌ (Error occurs here)
-
-Result: Entire app shows blank white screen! 💥
+Without Error Boundary             With Error Boundary
+───────────────────────────────    ─────────────────────────────────────
+  One component crashes            One component crashes
+  Entire app goes blank ❌          Error Boundary catches it
+  User sees white screen           Shows friendly fallback UI ✅
+  Confused user leaves ❌           Rest of app keeps working ✅
 ```
 
-#### With Error Boundaries:
+> ⚠️ **Class component only:** Error Boundaries must be class components — there is currently no hook equivalent. But you write them once and reuse them everywhere.
 
-```
-Component Tree:
-App
-├── Header ✅ (Still works!)
-├── Sidebar ✅ (Still works!)
-└── <ErrorBoundary>
-    └── MainContent ❌
-        ↓
-    Fallback UI: "Something went wrong" ✅
+---
 
-Result: App continues working, only affected section shows error! 🛡️
-```
+### 💻 Error Boundary Class Component
 
-### 💻 Step-by-Step Implementation
+```jsx
+import { Component } from "react";
 
-#### Basic Error Boundary Class Component
-
-```javascript
-import React from 'react';
-
-class ErrorBoundary extends React.Component {
+class ErrorBoundary extends Component {
   constructor(props) {
     super(props);
-    this.state = { 
-      hasError: false,
-      error: null,
-      errorInfo: null
-    };
+    this.state = { hasError: false, error: null, errorInfo: null };
   }
 
-  // Called when error is thrown
+  // Called when a child throws — updates state to show fallback
   static getDerivedStateFromError(error) {
-    // Update state to show fallback UI
-    return { hasError: true };
+    return { hasError: true, error };
   }
 
-  // Called after error is caught
+  // Called after an error — good place to log to an error service
   componentDidCatch(error, errorInfo) {
-    // Log error to error reporting service
-    console.error('Error caught by boundary:', error, errorInfo);
-
-    // You can also log to services like Sentry
-    // logErrorToService(error, errorInfo);
-
-    this.setState({
-      error: error,
-      errorInfo: errorInfo
-    });
+    console.error("Error caught by boundary:", error, errorInfo);
+    // logErrorToService(error, errorInfo);   ← Sentry, Datadog, etc.
+    this.setState({ errorInfo });
   }
 
   render() {
     if (this.state.hasError) {
-      // Fallback UI
+      // Fallback UI — customise per use case
       return (
-        <div className="error-container">
-          <h1>😔 Oops! Something went wrong.</h1>
-          <p>We're sorry for the inconvenience.</p>
-          <button onClick={() => this.setState({ hasError: false })}>
-            Try Again
+        <div style={{ padding: "24px", border: "2px solid #e74c3c", borderRadius: "8px", background: "#fdf2f2" }}>
+          <h3>⚠️ Something went wrong</h3>
+          <p style={{ color: "#e74c3c" }}>{this.state.error?.message}</p>
+          <button onClick={() => this.setState({ hasError: false, error: null })}>
+            🔄 Try Again
           </button>
         </div>
       );
     }
 
-    // Normal render
     return this.props.children;
   }
 }
 
-export default ErrorBoundary;
-```
-
-**Explanation**:
-- Error Boundaries must be **class components** (hooks can't catch errors yet)
-- `getDerivedStateFromError()`: Updates state to show fallback
-- `componentDidCatch()`: Logs error details
-
-#### Usage in App
-
-```javascript
+// Usage — wrap any section of your app
 function App() {
   return (
     <div>
-      <Header />
+      <Navbar />
 
+      {/* If Dashboard crashes, only this section shows error — Navbar stays intact */}
       <ErrorBoundary>
-        <Sidebar />
+        <Dashboard />
       </ErrorBoundary>
 
+      {/* Separate boundary for each critical section */}
       <ErrorBoundary>
-        <MainContent />
+        <PaymentWidget />
       </ErrorBoundary>
 
       <Footer />
     </div>
   );
 }
-```
 
-#### Advanced Error Boundary with Details
-
-```javascript
-class DetailedErrorBoundary extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      hasError: false,
-      error: null,
-      errorInfo: null,
-      errorCount: 0
-    };
-  }
-
-  static getDerivedStateFromError(error) {
-    return { hasError: true };
-  }
-
-  componentDidCatch(error, errorInfo) {
-    const errorCount = this.state.errorCount + 1;
-
-    this.setState({
-      error,
-      errorInfo,
-      errorCount
-    });
-
-    // Log to error tracking service
-    this.logError(error, errorInfo);
-
-    // Too many errors? Alert admins
-    if (errorCount > 5) {
-      this.alertAdmins(error);
-    }
-  }
-
-  logError = (error, errorInfo) => {
-    // Send to Sentry, LogRocket, etc.
-    console.log('Logging error:', {
-      message: error.toString(),
-      stack: errorInfo.componentStack,
-      timestamp: new Date().toISOString()
-    });
-  };
-
-  alertAdmins = (error) => {
-    // Send alert to admin team
-    console.log('CRITICAL: Multiple errors detected!');
-  };
-
-  handleReset = () => {
-    this.setState({
-      hasError: false,
-      error: null,
-      errorInfo: null
-    });
-  };
-
-  render() {
-    if (this.state.hasError) {
-      return (
-        <div className="error-boundary">
-          <h1>🚨 Application Error</h1>
-          <h2>{this.state.error && this.state.error.toString()}</h2>
-
-          {/* Show details in development */}
-          {process.env.NODE_ENV === 'development' && (
-            <details style={{ whiteSpace: 'pre-wrap' }}>
-              <summary>Error Details</summary>
-              {this.state.error && this.state.error.stack}
-              <br />
-              {this.state.errorInfo && this.state.errorInfo.componentStack}
-            </details>
-          )}
-
-          <div className="error-actions">
-            <button onClick={this.handleReset}>
-              Try Again
-            </button>
-            <button onClick={() => window.location.href = '/'}>
-              Go Home
-            </button>
-            <button onClick={() => window.location.reload()}>
-              Reload Page
-            </button>
-          </div>
-
-          <p>Error Count: {this.state.errorCount}</p>
-        </div>
-      );
-    }
-
-    return this.props.children;
-  }
+// Component that intentionally throws for testing
+function BuggyComponent() {
+  throw new Error("I crashed on purpose! 💥");
+  return <div>You won't see this</div>;
 }
 ```
 
-### 🎯 Multiple Error Boundaries Strategy
+> 💡 **Strategy:** Don't wrap the entire app in one boundary — wrap **individual sections** so a crash in one part doesn't hide other working parts.
 
-```javascript
-function App() {
-  return (
-    <div className="app">
-      {/* Critical UI - No error boundary, must always work */}
-      <Header />
-      <Navigation />
+---
 
-      {/* Route-level error boundaries */}
-      <Routes>
-        <Route path="/" element={
-          <ErrorBoundary fallback={<HomeError />}>
-            <HomePage />
-          </ErrorBoundary>
-        } />
+## ⚠️ Best Practices & Common Mistakes
 
-        <Route path="/dashboard" element={
-          <ErrorBoundary fallback={<DashboardError />}>
-            <Dashboard />
-          </ErrorBoundary>
-        } />
+### 🚫 Mistakes to Avoid
 
-        <Route path="/profile" element={
-          <ErrorBoundary fallback={<ProfileError />}>
-            <ProfilePage />
-          </ErrorBoundary>
-        } />
-      </Routes>
+```jsx
+// ❌ 1. Putting everything in one giant Context
+const AppContext = createContext();
+// Sharing user, theme, cart, notifications, language all in one context
+// Any change to ANY value re-renders ALL consumers ❌
 
-      {/* Component-level error boundary */}
-      <aside>
-        <ErrorBoundary fallback={<div>Sidebar unavailable</div>}>
-          <Sidebar />
-        </ErrorBoundary>
-      </aside>
+// ✅ Fix — split into multiple focused contexts
+<AuthContext.Provider>       // user data
+  <ThemeContext.Provider>    // theme only
+    <CartContext.Provider>   // cart only
+      <App />
+    </CartContext.Provider>
+  </ThemeContext.Provider>
+</AuthContext.Provider>
 
-      <Footer />
-    </div>
-  );
-}
-```
 
-### 🔄 Custom Fallback Components
+// ❌ 2. Overusing useMemo / useCallback — premature optimisation
+const double = useMemo(() => count * 2, [count]);   // ❌ Trivial calculation!
+// Memoization has overhead — only use for genuinely expensive operations
 
-```javascript
-// Simple fallback
-function SimpleFallback() {
-  return (
-    <div className="error-fallback">
-      <p>😔 Something went wrong</p>
-    </div>
-  );
-}
+// ✅ Use useMemo for real bottlenecks
+const sortedData = useMemo(() =>
+  largeDataset.sort((a, b) => b.score - a.score),
+  [largeDataset]
+);
 
-// Detailed fallback
-function DetailedFallback({ error, resetError }) {
-  return (
-    <div className="detailed-error">
-      <h2>Application Error</h2>
-      <p>{error.message}</p>
-      <button onClick={resetError}>Reset</button>
-    </div>
-  );
-}
 
-// Custom error boundary with props
-class CustomErrorBoundary extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = { hasError: false, error: null };
+// ❌ 3. useCallback with no actual benefit
+const handleClick = useCallback(() => {
+  console.log("clicked");
+}, []);
+// Pointless if the child is NOT wrapped in React.memo
+// memo + useCallback work as a PAIR ✅
+
+
+// ❌ 4. Calling dispatch on unmounted component
+// If an async operation finishes after component unmounts and dispatches → warning
+// ✅ Use cleanup in useEffect to cancel async operations
+
+
+// ❌ 5. Forgetting Suspense when using React.lazy
+const Dashboard = lazy(() => import("./Dashboard"));
+// <Dashboard />   ← Error: lazy component must be in Suspense tree!
+
+// ✅ Fix
+<Suspense fallback={<p>Loading...</p>}>
+  <Dashboard />
+</Suspense>
+
+
+// ❌ 6. Using Error Boundaries for event handler errors
+// Error Boundaries only catch errors in render / lifecycle
+// Errors inside onClick, onChange, etc. must be handled with try/catch
+const handleClick = async () => {
+  try {
+    await doSomething();
+  } catch (err) {
+    setError(err.message);   // handle manually
   }
-
-  static getDerivedStateFromError(error) {
-    return { hasError: true, error };
-  }
-
-  componentDidCatch(error, errorInfo) {
-    this.props.onError?.(error, errorInfo);
-  }
-
-  resetError = () => {
-    this.setState({ hasError: false, error: null });
-  };
-
-  render() {
-    if (this.state.hasError) {
-      // Use custom fallback component
-      const FallbackComponent = this.props.fallback;
-      return (
-        <FallbackComponent 
-          error={this.state.error}
-          resetError={this.resetError}
-        />
-      );
-    }
-
-    return this.props.children;
-  }
-}
-
-// Usage
-<CustomErrorBoundary 
-  fallback={DetailedFallback}
-  onError={(error, errorInfo) => logToSentry(error, errorInfo)}
->
-  <MyComponent />
-</CustomErrorBoundary>
-```
-
-### ⚠️ What Error Boundaries DON'T Catch
-
-Error Boundaries do **NOT** catch errors in:
-
-1. **Event handlers** (use try-catch)
-```javascript
-// ❌ Error boundary won't catch this
-function MyComponent() {
-  const handleClick = () => {
-    throw new Error('Button error!');
-  };
-
-  return <button onClick={handleClick}>Click</button>;
-}
-
-// ✅ Use try-catch in event handlers
-function MyComponent() {
-  const handleClick = () => {
-    try {
-      riskyOperation();
-    } catch (error) {
-      console.error('Caught error:', error);
-      showErrorToUser(error);
-    }
-  };
-
-  return <button onClick={handleClick}>Click</button>;
-}
-```
-
-2. **Asynchronous code** (use try-catch)
-```javascript
-// ❌ Error boundary won't catch this
-function MyComponent() {
-  useEffect(() => {
-    fetchData().then(data => {
-      throw new Error('Async error!');
-    });
-  }, []);
-
-  return <div>Content</div>;
-}
-
-// ✅ Use try-catch for async errors
-function MyComponent() {
-  useEffect(() => {
-    async function loadData() {
-      try {
-        const data = await fetchData();
-        setData(data);
-      } catch (error) {
-        console.error('Fetch error:', error);
-        setError(error);
-      }
-    }
-    loadData();
-  }, []);
-
-  return <div>Content</div>;
-}
-```
-
-3. **Server-side rendering**
-4. **Errors in the error boundary itself**
-
-### 🎨 Complete Example: Error Boundary with Retry Logic
-
-```javascript
-class ResilientErrorBoundary extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      hasError: false,
-      error: null,
-      errorInfo: null,
-      retryCount: 0
-    };
-  }
-
-  static getDerivedStateFromError(error) {
-    return { hasError: true };
-  }
-
-  componentDidCatch(error, errorInfo) {
-    this.setState({ error, errorInfo });
-
-    // Auto-retry logic
-    if (this.state.retryCount < 3) {
-      setTimeout(() => {
-        this.handleRetry();
-      }, 2000);
-    }
-  }
-
-  handleRetry = () => {
-    this.setState(prevState => ({
-      hasError: false,
-      error: null,
-      errorInfo: null,
-      retryCount: prevState.retryCount + 1
-    }));
-  };
-
-  handleReset = () => {
-    this.setState({
-      hasError: false,
-      error: null,
-      errorInfo: null,
-      retryCount: 0
-    });
-  };
-
-  render() {
-    const { hasError, error, retryCount } = this.state;
-    const { maxRetries = 3 } = this.props;
-
-    if (hasError) {
-      if (retryCount < maxRetries) {
-        return (
-          <div className="error-retry">
-            <p>⏳ An error occurred. Retrying... (Attempt {retryCount}/{maxRetries})</p>
-          </div>
-        );
-      }
-
-      return (
-        <div className="error-final">
-          <h2>😔 Unable to Load Component</h2>
-          <p>{error && error.toString()}</p>
-          <button onClick={this.handleReset}>Reset</button>
-        </div>
-      );
-    }
-
-    return this.props.children;
-  }
-}
-
-// Usage
-<ResilientErrorBoundary maxRetries={3}>
-  <UnreliableComponent />
-</ResilientErrorBoundary>
-```
-
-### ✅ Do's and ❌ Don'ts
-
-| ✅ Do's | ❌ Don'ts |
-|---------|-----------|
-| Use multiple error boundaries for isolation | Don't wrap every single component |
-| Provide helpful fallback UI | Don't show generic "Error" messages |
-| Log errors to monitoring services | Don't ignore error information |
-| Use try-catch for event handlers | Don't rely on error boundaries for async errors |
-| Test error boundaries thoroughly | Don't forget error boundaries in production |
-
-### 🔧 Integration with Error Monitoring
-
-```javascript
-import * as Sentry from '@sentry/react';
-
-class ErrorBoundary extends React.Component {
-  componentDidCatch(error, errorInfo) {
-    // Log to Sentry
-    Sentry.withScope(scope => {
-      scope.setExtras(errorInfo);
-      Sentry.captureException(error);
-    });
-
-    this.setState({ hasError: true });
-  }
-
-  // ... rest of component
-}
-
-// Or use Sentry's built-in error boundary
-import { ErrorBoundary } from '@sentry/react';
-
-<ErrorBoundary fallback={<ErrorFallback />} showDialog>
-  <App />
-</ErrorBoundary>
+};
 ```
 
 ---
 
-## 🎯 Best Practices & Common Mistakes
+### ✅ Do's & Don'ts — Quick Reference
 
-### 🌟 Best Practices
-
-#### 1. Context API
-- ✅ Split contexts by domain (UserContext, ThemeContext, etc.)
-- ✅ Memoize context values to prevent unnecessary re-renders
-- ✅ Create custom hooks for context consumption
-- ✅ Use Context for truly global state
-
-#### 2. useReducer
-- ✅ Use descriptive action type names (ADD_TODO, not UPDATE)
-- ✅ Keep reducers pure (no side effects)
-- ✅ Normalize complex state structures
-- ✅ Combine with Context for global state management
-
-#### 3. Performance Optimization
-- ✅ Profile before optimizing (use React DevTools Profiler)
-- ✅ Memoize expensive calculations with useMemo
-- ✅ Memoize callbacks passed to children with useCallback
-- ✅ Use React.memo for components that render with same props often
-
-#### 4. Code Splitting
-- ✅ Split at route level first
-- ✅ Lazy load heavy third-party libraries
-- ✅ Provide meaningful loading states
-- ✅ Preload critical routes on user interaction
-
-#### 5. Error Boundaries
-- ✅ Use multiple boundaries for isolation
-- ✅ Provide helpful error messages
-- ✅ Log errors to monitoring services
-- ✅ Test error scenarios thoroughly
-
-### ❌ Common Mistakes
-
-#### 1. Context Overuse
-```javascript
-// ❌ BAD - Everything in one context
-const AppContext = createContext({
-  user,
-  theme,
-  language,
-  notifications,
-  cart,
-  products
-});
-
-// ✅ GOOD - Separate contexts
-const UserContext = createContext(user);
-const ThemeContext = createContext(theme);
-const CartContext = createContext(cart);
-```
-
-#### 2. Forgetting Dependencies
-```javascript
-// ❌ BAD - Missing dependencies
-const filteredItems = useMemo(() => {
-  return items.filter(item => item.price > minPrice);
-}, [items]); // Missing minPrice!
-
-// ✅ GOOD
-const filteredItems = useMemo(() => {
-  return items.filter(item => item.price > minPrice);
-}, [items, minPrice]);
-```
-
-#### 3. Premature Optimization
-```javascript
-// ❌ BAD - Memoizing everything
-const a = useMemo(() => count * 2, [count]);
-const b = useMemo(() => count + 1, [count]);
-const c = useCallback(() => console.log(count), [count]);
-
-// ✅ GOOD - Only memoize expensive operations
-const a = count * 2; // Cheap calculation
-const b = count + 1; // Cheap calculation
-const expensiveResult = useMemo(() => {
-  return heavyCalculation(largeDataset);
-}, [largeDataset]); // Expensive - worth memoizing
-```
-
-#### 4. Mutating State in Reducers
-```javascript
-// ❌ BAD - Mutating state
-function reducer(state, action) {
-  switch (action.type) {
-    case 'ADD_ITEM':
-      state.items.push(action.payload); // Mutation!
-      return state;
-  }
-}
-
-// ✅ GOOD - Return new objects
-function reducer(state, action) {
-  switch (action.type) {
-    case 'ADD_ITEM':
-      return {
-        ...state,
-        items: [...state.items, action.payload]
-      };
-  }
-}
-```
-
-#### 5. Not Using Error Boundaries
-```javascript
-// ❌ BAD - No error boundaries
-function App() {
-  return (
-    <div>
-      <Header />
-      <MainContent /> {/* If this crashes, entire app dies! */}
-      <Footer />
-    </div>
-  );
-}
-
-// ✅ GOOD - Protected with error boundary
-function App() {
-  return (
-    <div>
-      <Header />
-      <ErrorBoundary>
-        <MainContent />
-      </ErrorBoundary>
-      <Footer />
-    </div>
-  );
-}
-```
+| ✅ DO | ❌ DON'T |
+|-------|----------|
+| Split Context by domain (auth, theme, cart) | Put all global state in one context |
+| Use custom hook to wrap `useContext` | Call `useContext` directly everywhere |
+| Use `useReducer` for multi-step state logic | Use many `useState` for related values |
+| Pair `React.memo` with `useCallback` | Use `memo` without stabilising function props |
+| Use `useMemo` only for expensive calculations | Wrap every tiny computation in `useMemo` |
+| Wrap `lazy` components in `<Suspense>` | Use `lazy` without a fallback |
+| Use multiple focused Error Boundaries | Wrap entire app in one Error Boundary |
+| Use `dispatch` with descriptive action types | Use cryptic or abbreviated action names |
 
 ---
 
-## 💡 Learning Tips
+## 📝 Summary
 
-### 🎓 For Beginners
+| Concept | What It Is | Golden Rule |
+|---------|-----------|-------------|
+| **Context API** | Global data channel for any component | Split by domain — one context per concern |
+| **`useContext`** | Hook to read from a context | Wrap in a custom hook for better DX |
+| **`useReducer`** | State machine for complex updates | Use when state has many related transitions |
+| **`React.memo`** | Skips re-render if props unchanged | Must pair with `useCallback` for function props |
+| **`useMemo`** | Caches an expensive computed value | Only for genuinely heavy calculations |
+| **`useCallback`** | Stabilises a function reference | Use when function is passed to memo'd child |
+| **`React.lazy`** | Loads component only when needed | Always wrap in `<Suspense fallback={...}>` |
+| **Error Boundary** | Catches render-time errors in children | Wrap individual sections, not the whole app |
 
-1. **Master the Basics First**: Make sure you're comfortable with useState and useEffect before diving into Context and useReducer.
+<br/>
 
-2. **Don't Optimize Prematurely**: Build your feature first, then optimize if you notice performance issues. Use React DevTools Profiler to identify bottlenecks.
+```
+🗺️  Day 4 Mental Model
 
-3. **One Concept at a Time**: Don't try to use Context + useReducer + useMemo all at once. Learn each independently first.
+  Context API                 useReducer              Performance
+  ──────────────────────      ──────────────────────  ─────────────────────────
+  createContext()             dispatch(action)        React.memo
+       │                           │                      + useCallback
+  Provider broadcasts              │                  = skip re-renders
+       │                       reducer(state, action)
+  useContext()                     │                  useMemo
+  any component reads          new state returned     = cache calculations
 
-4. **Console.log is Your Friend**: Add console logs to understand when components re-render:
-```javascript
-function MyComponent() {
-  console.log('MyComponent rendered!');
-  // ...
-}
+                                                      lazy() + Suspense
+                                                      = smaller bundle
+                                                      = faster initial load
 ```
 
-5. **Start Small**: Create simple examples to understand concepts before building complex features.
+<br/>
 
-### 🚀 Practice Projects
+> 🚀 **Up Next — Day 5:**
+> `HOCs` · `Render Props` · `Compound Components` · `Custom Hooks Library` · `Testing` · `TypeScript Basics`
 
-1. **Theme Switcher**: Use Context API to implement dark/light theme switching
-2. **Todo App with useReducer**: Build a todo app using useReducer for state management
-3. **Optimized List**: Create a list of 1000 items and optimize with React.memo and useCallback
-4. **Multi-Route App**: Build an app with lazy loading for different routes
-5. **Resilient Component**: Create a component with error boundaries and fallback UI
+<br/>
 
-### 📚 Further Learning
-
-- **React DevTools**: Install and learn to use the Profiler tab
-- **Performance Monitoring**: Experiment with React's built-in performance tools
-- **Real-World Apps**: Study open-source React projects on GitHub
-- **Official Docs**: Read React's official documentation (react.dev)
-
-### 🎯 Mental Models
-
-**Context API**: Think "global broadcasting system"
-**useReducer**: Think "state machine with rules"
-**Memoization**: Think "smart caching"
-**Lazy Loading**: Think "load on demand"
-**Error Boundaries**: Think "safety nets"
-
----
-
-## 🎉 Congratulations!
-
-You've completed Day 4 of your React learning journey! Today you learned:
-
-- ✅ Context API for global state management
-- ✅ useReducer for complex state logic
-- ✅ Performance optimization with React.memo, useMemo, and useCallback
-- ✅ Lazy loading and code splitting for better performance
-- ✅ Error boundaries for resilient applications
-
-### 🔜 Next Steps
-
-- Practice building projects using these concepts
-- Profile your applications for performance bottlenecks
-- Explore state management libraries (Redux, Zustand, Jotai)
-- Learn about React Server Components
-- Dive into advanced patterns and architectures
-
-Keep coding, keep learning, and most importantly—have fun! 🚀
-
----
-
-## 📖 Quick Reference
-
-### Context API
-```javascript
-const MyContext = createContext(defaultValue);
-<MyContext.Provider value={value}>{children}</MyContext.Provider>
-const value = useContext(MyContext);
-```
-
-### useReducer
-```javascript
-const [state, dispatch] = useReducer(reducer, initialState);
-dispatch({ type: 'ACTION_TYPE', payload: data });
-```
-
-### Memoization
-```javascript
-const MemoComponent = memo(Component);
-const memoValue = useMemo(() => compute(), [deps]);
-const memoCallback = useCallback(() => {}, [deps]);
-```
-
-### Lazy Loading
-```javascript
-const Component = lazy(() => import('./Component'));
-<Suspense fallback={<Loading />}><Component /></Suspense>
-```
-
-### Error Boundary
-```javascript
-class ErrorBoundary extends React.Component {
-  static getDerivedStateFromError(error) { return { hasError: true }; }
-  componentDidCatch(error, errorInfo) { /* log error */ }
-  render() { return this.state.hasError ? <Fallback /> : this.props.children; }
-}
-```
-
----
+<div align="center">
 
 **Happy Coding! 💻✨**
 
-*Remember: Great developers aren't born—they're built, one day at a time!*
+*Optimise with purpose — measure before you memoize.* 🚀
+
+---
+
+*Made with ❤️ for React learners*
+
+![React](https://img.shields.io/badge/Keep%20Building-React-61DAFB?style=flat-square&logo=react)
+![JS](https://img.shields.io/badge/Understand%20the-JS%20Roots-F7DF1E?style=flat-square&logo=javascript&logoColor=black)
+
+</div>
